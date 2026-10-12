@@ -19,7 +19,7 @@ export const Region: React.FC<{children: React.ReactNode; style?: React.CSSPrope
 // Unit that scales with the region, so the same visual works in 16:9 and 9:16.
 export const useUnit = () => {
   const b = useBox();
-  return Math.min(b.w / 1390, b.h / 940) * (b.w < b.h ? 1.25 : 1);
+  return Math.min(b.w / 1390, b.h / 940) * (b.w < b.h ? 1.5 : 1);
 };
 
 export const useEnter = (delay = 0, damping = 18) => {
