@@ -1,0 +1,116 @@
+{
+  "id": "sample-claude-automation",
+  "title": "Claude aur Automation: kiska job bachega?",
+  "format": "16:9",
+  "tracker": {
+    "title": "Lesson progress",
+    "objectives": [
+      {"id": "o1", "label": "What changed", "children": [
+        {"id": "o1a", "label": "One AI, many apps"},
+        {"id": "o1b", "label": "How Zapier and n8n connect them"}
+      ]},
+      {"id": "o2", "label": "A real example", "children": [
+        {"id": "o2a", "label": "Post, invoice, WhatsApp"}
+      ]},
+      {"id": "o3", "label": "Whose job is safe", "children": [
+        {"id": "o3a", "label": "Before vs now"},
+        {"id": "o3b", "label": "The skill that matters"}
+      ]}
+    ]
+  },
+  "scenes": [
+    {
+      "id": "S01",
+      "narration": "[curious] Aaj jitne logon ka job jaa raha hai… uske peeche ek hi cheez hai.",
+      "durationSec": 4.5,
+      "objective": "o1a",
+      "sfx": "whoosh",
+      "visual": {"type": "question", "text": "Who is really taking the jobs?", "highlight": ["jobs"]}
+    },
+    {
+      "id": "S02",
+      "narration": "[explaining] Maan lijiye aapke paas ek AI hai, jo aapke saare apps se baat kar sakta hai.",
+      "durationSec": 6,
+      "objective": "o1a",
+      "completes": ["o1a"],
+      "visual": {"type": "hub", "center": {"label": "Claude", "icon": "brain"}, "spokes": [
+        {"label": "Instagram", "icon": "post"},
+        {"label": "WhatsApp", "icon": "whatsapp"},
+        {"label": "Tally", "icon": "invoice"},
+        {"label": "Gmail", "icon": "chat"},
+        {"label": "Sheets", "icon": "chart"},
+        {"label": "Drive", "icon": "doc"}
+      ]}
+    },
+    {
+      "id": "S03",
+      "narration": "[explaining] Zapier aur n8n jaise tools… 1000 se zyada apps ko aapas mein connect karte hain.",
+      "durationSec": 6,
+      "objective": "o1b",
+      "completes": ["o1b"],
+      "onScreen": "1,000+ apps connected",
+      "visual": {"type": "stat", "value": 1000, "suffix": "+", "label": "Apps you can connect through one automation tool", "source": "Zapier app directory, 2026"}
+    },
+    {
+      "id": "S04",
+      "narration": "[confident] Aap kahiye 'create a post'… post ban jaata hai. 'Post it on Instagram'… post ho jaata hai. Phir GST invoice, aur WhatsApp pe sabko message.",
+      "durationSec": 9,
+      "objective": "o2a",
+      "completes": ["o2a"],
+      "sfx": "ping",
+      "visual": {"type": "flow", "heading": "One instruction, four jobs done", "steps": [
+        {"label": "Create a post", "sub": "Image generated", "icon": "post"},
+        {"label": "Publish", "sub": "Instagram", "icon": "phone"},
+        {"label": "GST invoice", "sub": "Tally", "icon": "invoice"},
+        {"label": "Notify customers", "sub": "WhatsApp", "icon": "whatsapp"}
+      ]}
+    },
+    {
+      "id": "S05",
+      "narration": "[thoughtful] Pehle kya tha ki in sab kaamon ke liye alag-alag log rakhne padte the. Ab ek automation tool kaafi hai.",
+      "durationSec": 8,
+      "objective": "o3a",
+      "completes": ["o3a"],
+      "visual": {"type": "compare",
+        "left": {"heading": "Before", "items": ["Social media strategist", "Content writer", "Graphic designer", "Accountant"], "tone": "muted"},
+        "right": {"heading": "Now", "items": ["One person", "One automation tool", "AI does the steps"], "tone": "accent"}}
+    },
+    {
+      "id": "S06",
+      "narration": "[measured] Kehne ka matlab yeh hai ki ek aadmi akele chaar logon ka kaam kar sakta hai.",
+      "durationSec": 6,
+      "objective": "o3b",
+      "compact": true,
+      "visual": {"type": "formula", "heading": "The new maths of work", "lines": [
+        {"text": "Before:  4 people  →  4 jobs"},
+        {"text": "Now:     1 person + AI  →  4 jobs"},
+        {"text": "Output per person  =  4×", "final": true}
+      ]}
+    },
+    {
+      "id": "S07",
+      "narration": "[emphatic] Toh job kiska nahi jayega? Jo poore workflow ko samajhta hai… aur AI se sahi kaam karwa sakta hai.",
+      "durationSec": 7,
+      "objective": "o3b",
+      "completes": ["o3b"],
+      "visual": {"type": "points", "heading": "Whose job stays safe", "items": ["Understands the whole workflow", "Gets good output from AI", "Spends fewer credits doing it"], "highlight": ["workflow", "AI", "fewer credits"]}
+    },
+    {
+      "id": "S08",
+      "narration": "[calm] Yeh badlaav duniya bhar mein ho raha hai… aur India bhi isse alag nahi hai.",
+      "durationSec": 6,
+      "visual": {"type": "map", "map": {
+        "projection": "globe-to-flat",
+        "from": {"center": [10, 25], "zoom": 1.2},
+        "focus": {"center": [78, 22], "zoom": 4.2},
+        "highlights": [{"iso3": "IND", "tone": "accent", "delay": 40}],
+        "markers": [{"at": [72.88, 19.07], "label": "Mumbai", "delay": 55}, {"at": [77.59, 12.97], "label": "Bengaluru", "delay": 62}],
+        "routes": [{"points": [[72.88, 19.07], [77.59, 12.97]], "tone": "warn", "dashed": true, "delay": 70, "duration": 40}]
+      }}
+    }
+  ],
+  "shorts": [
+    {"id": "short-1", "hook": "One AI just did 4 jobs", "scenes": ["S02", "S04", "S07"]}
+  ],
+  "thumbnail": {"headline": "Whose job will AI take?", "sub": "Claude + Automation explained"}
+}
