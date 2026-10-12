@@ -1,0 +1,937 @@
+{
+  "title": "70 kg se 60 kg: Wo 10 Kilo Fat Gaya Kahan?",
+  "title_options": [
+    "70 kg se 60 kg: Wo 10 Kilo Fat Gaya Kahan?",
+    "Fat Loss Ka Sach Jo Doctors Bhi Nahi Jaante",
+    "Jab Weight Kam Hota Hai, Fat Jaata Kahan Hai?"
+  ],
+  "summary": "A science explainer on the well-known misconception about where body fat physically goes during weight loss, using the 2014 BMJ study by Meerman and Brown. It walks through the triglyceride oxidation chemistry to show that losing 10 kg of fat (going from 70 kg to 60 kg) means about 8.4 kg is exhaled as carbon dioxide and 1.6 kg leaves as water.",
+  "tracker": {
+    "title": "Lesson progress",
+    "objectives": [
+      {
+        "id": "o1",
+        "label": "The Myth",
+        "children": [
+          {
+            "id": "o1a",
+            "label": "What people think happens"
+          },
+          {
+            "id": "o1b",
+            "label": "Survey: experts get it wrong"
+          }
+        ]
+      },
+      {
+        "id": "o2",
+        "label": "Conservation of Mass",
+        "children": [
+          {
+            "id": "o2a",
+            "label": "Mass must leave the body"
+          },
+          {
+            "id": "o2b",
+            "label": "Correct exit routes"
+          }
+        ]
+      },
+      {
+        "id": "o3",
+        "label": "The Chemistry",
+        "children": [
+          {
+            "id": "o3a",
+            "label": "Triglyceride molecule"
+          },
+          {
+            "id": "o3b",
+            "label": "Oxidation equation"
+          },
+          {
+            "id": "o3c",
+            "label": "84% vs 16% split"
+          }
+        ]
+      },
+      {
+        "id": "o4",
+        "label": "70 kg to 60 kg Case",
+        "children": [
+          {
+            "id": "o4a",
+            "label": "Known values"
+          },
+          {
+            "id": "o4b",
+            "label": "Calculate CO2 and water"
+          },
+          {
+            "id": "o4c",
+            "label": "Where it physically exits"
+          }
+        ]
+      },
+      {
+        "id": "o5",
+        "label": "Practical Takeaway",
+        "children": [
+          {
+            "id": "o5a",
+            "label": "Lungs are the real organ"
+          },
+          {
+            "id": "o5b",
+            "label": "What actually causes fat loss"
+          }
+        ]
+      }
+    ]
+  },
+  "facts": [
+    {
+      "fact": "Ruben Meerman and Andrew Brown published 'When somebody loses weight, where does the fat go?' in BMJ 2014;349:g7257.",
+      "source": "BMJ, 2014"
+    },
+    {
+      "fact": "In the study's survey, more than 50% of 150 doctors, dietitians and personal trainers thought fat converts to energy or heat when lost.",
+      "source": "UNSW Newsroom, 2014"
+    },
+    {
+      "fact": "According to a review of the survey, none of the doctors or personal trainers answered correctly, and only 6 of 50 dietitians gave the right answer.",
+      "source": "Colgan Institute (BMJ survey review), 2014"
+    },
+    {
+      "fact": "The correct answer: fat is converted to carbon dioxide, which is exhaled, and water, which leaves as urine, sweat and other fluids.",
+      "source": "UNSW Newsroom / BMJ, 2014"
+    },
+    {
+      "fact": "Human body fat is stored as triglyceride, with an average molecular formula of C55H104O6 and molecular weight of 861 daltons.",
+      "source": "BMJ (Meerman & Brown), 2014"
+    },
+    {
+      "fact": "Complete oxidation reaction: C55H104O6 + 78 O2 → 55 CO2 + 52 H2O + energy.",
+      "source": "KPBS / BMJ (Meerman & Brown), 2014"
+    },
+    {
+      "fact": "Calculation shows (661 Da carbon + 64 Da oxygen) / 861 Da total × 100 = 84% of a triglyceride's mass is exhaled as CO2; the remaining 16% becomes water.",
+      "source": "BMJ (Meerman & Brown), 2014"
+    },
+    {
+      "fact": "When somebody loses 10 kg of fat (triglyceride), 8.4 kg is exhaled as CO2, leaving 1.6 kg to exit as water.",
+      "source": "BMJ (Meerman & Brown), 2014, Fig 2"
+    },
+    {
+      "fact": "At rest, an average 70 kg person exhales about 200 ml of CO2 over 12 breaths per minute, excreting roughly 203 g of carbon over a full day of rest and light activity.",
+      "source": "BMJ (Meerman & Brown), 2014"
+    },
+    {
+      "fact": "Standing up and getting dressed more than doubles metabolic rate; trying on outfits for 24 hours would exhale over 1,200 g of CO2.",
+      "source": "UNSW Newsroom / SciTechDaily reprint, 2025"
+    },
+    {
+      "fact": "The oxygen atoms of a triglyceride are shared between CO2 and water in a 2:1 ratio, a fact established by Lifson and colleagues in 1949 using heavy oxygen (O18) tracing.",
+      "source": "BMJ (Meerman & Brown), 2014, citing Lifson et al., 1949"
+    }
+  ],
+  "shorts": [
+    {
+      "hook": "Even doctors got this basic question wrong",
+      "scenes": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05"
+      ],
+      "title": "Doctors Got This Wrong About Fat Loss #Shorts",
+      "description": "Jab weight kam hota hai, fat jaata kahan hai? Ek 2014 BMJ study ne 150 health professionals se yeh sawaal poocha - aur jawab chaunka dene wala hai. #Shorts #FatLoss #Science",
+      "id": "short-1"
+    },
+    {
+      "hook": "The exact chemistry of where fat goes",
+      "scenes": [
+        "S15",
+        "S16",
+        "S17",
+        "S18",
+        "S19"
+      ],
+      "title": "84% Fat Leaves As This Gas #Shorts",
+      "description": "Triglyceride ki oxidation equation se nikalte hain exact answer - 84% fat carbon dioxide ban kar exhale hota hai, baaki 16% water. #Shorts #Biochemistry",
+      "id": "short-2"
+    },
+    {
+      "hook": "70 kg to 60 kg: here's the real math",
+      "scenes": [
+        "S20",
+        "S21",
+        "S22",
+        "S23",
+        "S24",
+        "S25",
+        "S26"
+      ],
+      "title": "Where 10 kg Of Fat Actually Goes #Shorts",
+      "description": "10 kilo fat lose kiya? 8.4 kg carbon dioxide ban kar saans se bahar gaya, aur 1.6 kg paani ban kar nikla. Poora calculation dekhiye. #Shorts #WeightLoss",
+      "id": "short-3"
+    },
+    {
+      "hook": "Your lungs are the real fat-burning organ",
+      "scenes": [
+        "S27",
+        "S28",
+        "S29",
+        "S30"
+      ],
+      "title": "Lungs Are Your Fat-Loss Organ #Shorts",
+      "description": "Sweat fat nahi nikalta, saans nikalta hai. Jaaniye kyun lungs hi aapke body ka sabse bada fat-loss organ hain. #Shorts #Fitness #Science",
+      "id": "short-4"
+    }
+  ],
+  "thumbnail": {
+    "headline": "Where Did The Fat Go?",
+    "sub": "70 kg to 60 kg, explained with chemistry"
+  },
+  "youtube": {
+    "title": "70 kg se 60 kg: Wo 10 Kilo Fat Gaya Kahan? Science Explained",
+    "description": "Jab weight 70 kg se 60 kg hota hai, wo 10 kilo fat literally gaya kahan? Is video mein hum 2014 ke BMJ study (Ruben Meerman aur Andrew Brown) ke through dekhte hain ki fat kaise carbon dioxide aur water mein convert hota hai - aur kyun zyada tar doctors, dietitians aur personal trainers bhi is sawaal ka sahi jawab nahi de paye.\n\nTopics covered:\n- Fat loss ke baare mein sabse common myth\n- Conservation of mass ka concept\n- Triglyceride (C55H104O6) ki chemistry\n- 84% CO2 aur 16% water ka exact calculation\n- 70 kg se 60 kg ke case mein real numbers\n\nSources:\n- Meerman R, Brown AJ. 'When somebody loses weight, where does the fat go?' BMJ 2014;349:g7257 - https://www.bmj.com/content/349/bmj.g7257\n- UNSW Newsroom, 'When we lose weight, where does the fat go?' (2014) - https://www.unsw.edu.au/newsroom/news/2014/12/when-we-lose-weight--where-does-the-fat-go--\n- SciTechDaily reprint by Meerman & Brown - https://scitechdaily.com/when-you-lose-weight-where-does-it-actually-go/\n\n#FatLoss #Science #Biochemistry #Hinglish #KumarUjjwal",
+    "tags": [
+      "fat loss science",
+      "where does fat go",
+      "BMJ study weight loss",
+      "triglyceride chemistry",
+      "weight loss explained hinglish",
+      "biochemistry of weight loss",
+      "70kg to 60kg",
+      "carbon dioxide fat loss",
+      "conservation of mass",
+      "Kumar Ujjwal"
+    ]
+  },
+  "sources": [
+    {
+      "title": "When somebody loses weight, where does the fat go? - The BMJ",
+      "url": "https://www.bmj.com/content/349/bmj.g7257"
+    },
+    {
+      "title": "When somebody loses weight, where does the fat go? (full PDF) - The BMJ",
+      "url": "https://www.bmj.com/content/bmj/349/bmj.g7257.full.pdf"
+    },
+    {
+      "title": "When somebody loses weight, where does the fat go? - PubMed",
+      "url": "https://pubmed.ncbi.nlm.nih.gov/25516540/"
+    },
+    {
+      "title": "When we lose weight, where does the fat go? - UNSW Newsroom, 2014",
+      "url": "https://www.unsw.edu.au/newsroom/news/2014/12/when-we-lose-weight--where-does-the-fat-go--"
+    },
+    {
+      "title": "When we lose weight, where does it go? - UNSW Sites, 2018",
+      "url": "https://www.unsw.edu.au/newsroom/news/2018/03/when-we-lose-weight--where-does-it-go-"
+    },
+    {
+      "title": "When You Lose Weight, Where Does It Actually Go? - SciTechDaily",
+      "url": "https://scitechdaily.com/when-you-lose-weight-where-does-it-actually-go/"
+    },
+    {
+      "title": "Misconceptions about the Chemistry of Weight Loss - Diabetes In Control",
+      "url": "https://www.diabetesincontrol.com/misconceptions-about-the-chemistry-of-weight-loss/"
+    },
+    {
+      "title": "When You Burn Off That Fat, Where Does It Go? - KPBS",
+      "url": "https://www.kpbs.org/news/2014/12/16/when-you-burn-off-that-fat-where-does-it-go"
+    },
+    {
+      "title": "Fat loss formula - Intraining Sports",
+      "url": "https://www.intrainingsports.com/fitness-blog/personal-training-fat-loss.html"
+    },
+    {
+      "title": "Womens Health Articles (BMJ survey details) - Colgan Programs",
+      "url": "https://colganprograms.wordpress.com/category/womens-health/"
+    }
+  ],
+  "scenes": [
+    {
+      "narration": "[curious] Maan lijiye kisi ka weight seventy kilogram se ghatkar sixty kilogram ho jaata hai… wo das kilo fat gaya kahan?",
+      "visual": {
+        "type": "question",
+        "text": "Where did the 10 kg of fat go?",
+        "highlight": [
+          "10 kg"
+        ]
+      },
+      "onScreen": "70 kg → 60 kg",
+      "beat": "Hook question - where does 10 kg of fat go when weight drops 70 to 60 kg?",
+      "objective": "o1a",
+      "completes": [],
+      "id": "S01",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[explaining] Zyada tar log sochte hain ki fat energy banta hai, ya muscle mein badalta hai, ya sweat aur toilet se nikal jaata hai.",
+      "visual": {
+        "type": "points",
+        "heading": "Common Guesses",
+        "items": [
+          "Converted to energy",
+          "Turned into muscle",
+          "Sweated out",
+          "Flushed in the toilet"
+        ],
+        "highlight": [
+          "energy"
+        ]
+      },
+      "beat": "List common guesses - converted to energy, muscle, sweat, toilet.",
+      "objective": "o1a",
+      "completes": [
+        "o1a"
+      ],
+      "id": "S02",
+      "durationSec": 9.6
+    },
+    {
+      "narration": "[measured] BMJ journal ki do thousand fourteen ki study mein yahi sawaal one hundred fifty doctors, dietitians aur personal trainers se poocha gaya tha.",
+      "visual": {
+        "type": "stat",
+        "value": 150,
+        "from": 0,
+        "suffix": "",
+        "decimals": 0,
+        "label": "People Surveyed",
+        "source": "BMJ, 2014"
+      },
+      "beat": "BMJ 2014 study surveyed 150 doctors, dietitians, personal trainers with this exact question.",
+      "objective": "o1b",
+      "completes": [],
+      "id": "S03",
+      "durationSec": 9.6
+    },
+    {
+      "narration": "[measured] Un mein se fifty percent se zyada logon ne socha ki fat lose hone par energy ya heat mein badal jaata hai.",
+      "visual": {
+        "type": "stat",
+        "value": 50,
+        "from": 0,
+        "suffix": "%+",
+        "decimals": 0,
+        "label": "Guessed Energy or Heat",
+        "source": "UNSW Newsroom, 2014"
+      },
+      "beat": "Over half of them guessed fat turns into energy or heat.",
+      "objective": "o1b",
+      "completes": [],
+      "id": "S04",
+      "durationSec": 9.2
+    },
+    {
+      "narration": "[serious] Hairaani ki baat yeh hai ki ek bhi doctor ya trainer sahi jawaab nahi de paaya, sirf fifty dietitians mein se six sahi nikle.",
+      "visual": {
+        "type": "stat",
+        "value": 6,
+        "from": 0,
+        "suffix": "/50",
+        "decimals": 0,
+        "label": "Dietitians Answered Correctly",
+        "source": "Colgan Institute (BMJ survey review), 2014"
+      },
+      "onScreen": "Doctors & Trainers: 0 Correct",
+      "beat": "Not one doctor or trainer got it right; only six dietitians did.",
+      "objective": "o1b",
+      "completes": [
+        "o1b"
+      ],
+      "id": "S05",
+      "durationSec": 10
+    },
+    {
+      "narration": "[curious] Agar fat sach mein energy ban gaya, toh uska mass, matlab wo physical weight, gaya kahan?",
+      "visual": {
+        "type": "question",
+        "text": "If fat became energy, where did the mass go?",
+        "highlight": [
+          "mass"
+        ]
+      },
+      "beat": "Re-hook - if fat became energy, where did the mass physically go?",
+      "objective": "o2a",
+      "completes": [],
+      "id": "S06",
+      "durationSec": 6.7
+    },
+    {
+      "narration": "[explaining] Physics ka ek basic niyam hai, conservation of mass, jiske according matter kabhi yun hi gayab nahi ho sakta.",
+      "visual": {
+        "type": "formula",
+        "heading": "Conservation of Mass",
+        "lines": [
+          {
+            "text": "Mass cannot be created or destroyed",
+            "note": "Fundamental physics law"
+          },
+          {
+            "text": "It can only change form",
+            "final": true
+          }
+        ]
+      },
+      "beat": "Law of conservation of mass - matter cannot simply vanish.",
+      "objective": "o2a",
+      "completes": [],
+      "id": "S07",
+      "durationSec": 7.9
+    },
+    {
+      "narration": "[thoughtful] Iska matlab yeh hai ki fat banane wale atoms ko body se kisi na kisi route se bahar nikalna hi padega.",
+      "visual": {
+        "type": "flow",
+        "heading": "Fat Must Exit the Body",
+        "steps": [
+          {
+            "label": "Fat Atoms",
+            "sub": "Stored in the body",
+            "icon": "person"
+          },
+          {
+            "label": "Must Exit",
+            "sub": "Mass leaves physically",
+            "icon": "link"
+          },
+          {
+            "label": "Via Some Route",
+            "sub": "To be revealed",
+            "icon": "bolt"
+          }
+        ]
+      },
+      "beat": "Fat atoms must physically exit the body through some route.",
+      "objective": "o2a",
+      "completes": [
+        "o2a"
+      ],
+      "id": "S08",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[calm] सही जवाब यह है कि fat body से carbon dioxide के रूप में exhale होता है, और बचा हुआ हिस्सा पानी बनकर निकलता है।",
+      "visual": {
+        "type": "title",
+        "title": "Fat Becomes CO2 and Water",
+        "subtitle": "Not energy, not muscle, not sweat alone",
+        "kicker": "The Correct Answer"
+      },
+      "beat": "Correct answer - fat leaves the body as exhaled carbon dioxide and water.",
+      "objective": "o2b",
+      "completes": [
+        "o2b"
+      ],
+      "id": "S09",
+      "durationSec": 10
+    },
+    {
+      "narration": "[curious] लेकिन असली सवाल यह है कि इसमें से कितना हिस्सा gas बनकर निकलता है, और कितना पानी बनकर?",
+      "visual": {
+        "type": "question",
+        "text": "How much leaves as CO2 vs water?",
+        "highlight": [
+          "CO2",
+          "water"
+        ]
+      },
+      "beat": "Re-hook - how much exits as gas versus how much as water?",
+      "objective": "o3a",
+      "completes": [],
+      "id": "S10",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[explaining] इसे समझने के लिए पहले जानिए कि body fat असल में triglyceride नाम के molecule के रूप में store होता है।",
+      "visual": {
+        "type": "title",
+        "title": "Triglyceride Molecule",
+        "subtitle": "Three fatty acids + one glycerol backbone",
+        "kicker": "How Fat Is Stored"
+      },
+      "beat": "Body fat is stored as triglyceride molecules - three fatty acids plus glycerol.",
+      "objective": "o3a",
+      "completes": [],
+      "id": "S11",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[measured] एक average human triglyceride का formula होता है C fifty-five, H one hundred four, O six, जिसका molecular weight eight hundred sixty-one daltons है।",
+      "visual": {
+        "type": "formula",
+        "heading": "Average Human Triglyceride",
+        "lines": [
+          {
+            "text": "Formula: C55H104O6"
+          },
+          {
+            "text": "Molecular weight = 861 Da",
+            "final": true
+          }
+        ]
+      },
+      "beat": "Average human triglyceride formula is C55H104O6, molecular weight 861 daltons.",
+      "objective": "o3a",
+      "completes": [
+        "o3a"
+      ],
+      "id": "S12",
+      "durationSec": 10
+    },
+    {
+      "narration": "[measured] हमारी calculation के लिए known value यह है कि एक triglyceride molecule का total weight eight hundred sixty-one daltons होता है।",
+      "visual": {
+        "type": "stat",
+        "value": 861,
+        "from": 0,
+        "prefix": "",
+        "suffix": " Da",
+        "decimals": 0,
+        "label": "Total molecular weight",
+        "source": "BMJ, 2014"
+      },
+      "beat": "Known value - one triglyceride molecule weighs 861 daltons in total.",
+      "objective": "o3b",
+      "completes": [],
+      "id": "S13",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[curious] अब required quantity यह है कि इस कुल mass में से कितना percent carbon dioxide बनेगा, और कितना percent पानी?",
+      "visual": {
+        "type": "question",
+        "text": "What percent becomes CO2, and what percent becomes water?",
+        "highlight": [
+          "percent",
+          "CO2",
+          "water"
+        ]
+      },
+      "beat": "Required quantity - what percentage of that mass leaves as CO2 versus water.",
+      "objective": "o3b",
+      "completes": [],
+      "id": "S14",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[explaining] Oxidation की equation कहती है कि triglyceride plus seventy-eight oxygen molecules मिलकर fifty-five carbon dioxide, fifty-two water, और energy बनाते हैं।",
+      "visual": {
+        "type": "formula",
+        "heading": "Complete Oxidation Reaction",
+        "lines": [
+          {
+            "text": "C55H104O6 + 78 O2 →"
+          },
+          {
+            "text": "55 CO2 + 52 H2O + energy",
+            "final": true
+          }
+        ]
+      },
+      "beat": "Oxidation equation - C55H104O6 plus 78 O2 gives 55 CO2, 52 H2O, energy.",
+      "objective": "o3b",
+      "completes": [],
+      "id": "S15",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[explaining] इसमें triglyceride के सभी fifty-five carbon atoms, और छह में से चार oxygen atoms, carbon dioxide बनाकर बाहर निकलते हैं।",
+      "visual": {
+        "type": "flow",
+        "heading": "Where the Atoms Go",
+        "steps": [
+          {
+            "label": "55 Carbon atoms",
+            "sub": "All exit as CO2",
+            "icon": "bolt"
+          },
+          {
+            "label": "4 of 6 Oxygen atoms",
+            "sub": "Join CO2",
+            "icon": "bolt"
+          },
+          {
+            "label": "Remaining atoms",
+            "sub": "Form H2O",
+            "icon": "check"
+          }
+        ]
+      },
+      "beat": "Variables - all 55 carbons plus 4 of the 6 oxygens leave as CO2.",
+      "objective": "o3b",
+      "completes": [
+        "o3b"
+      ],
+      "id": "S16",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[measured] Carbon ka mass hai six hundred sixty-one daltons, oxygen ka mass hai sixty-four daltons… total hua seven hundred twenty-five daltons.",
+      "visual": {
+        "type": "formula",
+        "heading": "Mass Substitution",
+        "lines": [
+          {
+            "text": "Carbon = 661 Da",
+            "note": "from 55 CO2"
+          },
+          {
+            "text": "Oxygen = 64 Da",
+            "note": "shared with CO2"
+          },
+          {
+            "text": "661 + 64 = 725 Da",
+            "final": true
+          }
+        ]
+      },
+      "compact": true,
+      "beat": "Substitution - carbon mass 661 Da plus oxygen mass 64 Da equals 725 Da.",
+      "objective": "o3c",
+      "completes": [],
+      "id": "S17",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[measured] Ab is seven hundred twenty-five ko total weight eight hundred sixty-one se divide kijiye, phir sau se multiply kijiye.",
+      "visual": {
+        "type": "stat",
+        "value": 84.2,
+        "from": 0,
+        "decimals": 1,
+        "suffix": "%",
+        "label": "725 ÷ 861 × 100",
+        "source": "BMJ, 2014"
+      },
+      "compact": true,
+      "beat": "Intermediate step - divide 725 by 861, then multiply by 100.",
+      "objective": "o3c",
+      "completes": [],
+      "id": "S18",
+      "durationSec": 7.9
+    },
+    {
+      "narration": "[emphatic] Answer yeh hai ki triglyceride ka eighty-four percent mass carbon dioxide banta hai, aur sixteen percent paani banta hai.",
+      "visual": {
+        "type": "stat",
+        "value": 84,
+        "from": 0,
+        "suffix": "%",
+        "label": "Mass exits as CO2 (16% as water)",
+        "source": "BMJ, 2014"
+      },
+      "onScreen": "84% CO2, 16% Water",
+      "beat": "Answer - 84 percent of fat mass exits as CO2, 16 percent as water.",
+      "objective": "o3c",
+      "completes": [
+        "o3c"
+      ],
+      "id": "S19",
+      "durationSec": 7.9
+    },
+    {
+      "narration": "[curious] Ab isi eighty-four aur sixteen percent ratio ko apply karte hain us case par, jahan weight seventy kilogram se sixty kilogram hui.",
+      "visual": {
+        "type": "question",
+        "text": "Apply this ratio: 70 kg → 60 kg",
+        "highlight": [
+          "70 kg",
+          "60 kg"
+        ]
+      },
+      "beat": "Re-hook - now apply this ratio to the 70 kg to 60 kg case.",
+      "objective": "o4a",
+      "completes": [],
+      "id": "S20",
+      "durationSec": 9.2
+    },
+    {
+      "narration": "[measured] Is case mein exactly ten kilogram body fat loss hua hai… yahi humara known value hai.",
+      "visual": {
+        "type": "stat",
+        "value": 10,
+        "from": 0,
+        "suffix": " kg",
+        "label": "Fat lost in this case",
+        "source": "BMJ, 2014"
+      },
+      "beat": "Known values - exactly 10 kg of body fat was lost in this case.",
+      "objective": "o4a",
+      "completes": [],
+      "id": "S21",
+      "durationSec": 6.7
+    },
+    {
+      "narration": "[explaining] Ab required quantity nikalni hai - in ten kilogram fat mein se kitna carbon dioxide banega aur kitna paani banega.",
+      "visual": {
+        "type": "formula",
+        "heading": "Required Quantity",
+        "lines": [
+          {
+            "text": "CO2 mass = ?"
+          },
+          {
+            "text": "Water mass = ?"
+          },
+          {
+            "text": "Given: 10 kg fat lost",
+            "note": "Split: 84% / 16%"
+          }
+        ]
+      },
+      "compact": true,
+      "beat": "Required quantity - find the exact CO2 mass and water mass produced.",
+      "objective": "o4a",
+      "completes": [
+        "o4a"
+      ],
+      "id": "S22",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[measured] Substitution kijiye - ten kilogram ka eighty-four percent nikalne par milta hai eight point four kilogram carbon dioxide.",
+      "visual": {
+        "type": "formula",
+        "heading": "Substitution",
+        "lines": [
+          {
+            "text": "10 kg × 84%",
+            "note": "CO2 fraction"
+          },
+          {
+            "text": "= 8.4 kg CO2",
+            "final": true
+          }
+        ]
+      },
+      "compact": true,
+      "onScreen": "8.4 kg CO2",
+      "beat": "Substitution - 10 kg times 84 percent equals 8.4 kg of carbon dioxide.",
+      "objective": "o4b",
+      "completes": [],
+      "id": "S23",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[measured] Aur bache hue sixteen percent se banta hai one point six kilogram paani, jo baaki nikal jata hai.",
+      "visual": {
+        "type": "formula",
+        "heading": "Substitution",
+        "lines": [
+          {
+            "text": "10 kg × 16%",
+            "note": "Water fraction"
+          },
+          {
+            "text": "= 1.6 kg Water",
+            "final": true
+          }
+        ]
+      },
+      "compact": true,
+      "onScreen": "1.6 kg Water",
+      "beat": "Substitution - 10 kg times 16 percent equals 1.6 kg of water.",
+      "objective": "o4b",
+      "completes": [
+        "o4b"
+      ],
+      "id": "S24",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[emphatic] [measured] यानी आठ दशमलव चार किलो directly आपके lungs के through, saans ke saath bahar nikal jaata hai.",
+      "visual": {
+        "type": "flow",
+        "heading": "Where the 8.4 kg Goes",
+        "steps": [
+          {
+            "label": "Fat Oxidised",
+            "sub": "CO2 produced",
+            "icon": "gear"
+          },
+          {
+            "label": "Blood",
+            "sub": "carries CO2",
+            "icon": "bolt"
+          },
+          {
+            "label": "Lungs",
+            "sub": "exhale CO2",
+            "icon": "person"
+          }
+        ]
+      },
+      "onScreen": "8.4 kg exits via breath",
+      "beat": "Interpretation - 8.4 kg is literally breathed out through the lungs.",
+      "objective": "o4c",
+      "completes": [],
+      "id": "S25",
+      "durationSec": 7.1
+    },
+    {
+      "narration": "[explaining] बacha hua ek दशमलव छह किलो paani, urine, sweat, tears aur saans ki namee ke roop mein body se nikal jaata hai.",
+      "visual": {
+        "type": "flow",
+        "heading": "Where the 1.6 kg Goes",
+        "steps": [
+          {
+            "label": "Urine",
+            "icon": "doc"
+          },
+          {
+            "label": "Sweat",
+            "icon": "bolt"
+          },
+          {
+            "label": "Tears",
+            "icon": "person"
+          },
+          {
+            "label": "Breath Moisture",
+            "icon": "chat"
+          }
+        ]
+      },
+      "onScreen": "1.6 kg exits as water",
+      "beat": "Remaining 1.6 kg of water leaves as urine, sweat, tears and breath moisture.",
+      "objective": "o4c",
+      "completes": [
+        "o4c"
+      ],
+      "id": "S26",
+      "durationSec": 9.2
+    },
+    {
+      "narration": "[thoughtful] Toh socho, jo organ sabse zyada fat bahar nikaalta hai, woh skin nahi, balki aapke lungs hain.",
+      "visual": {
+        "type": "compare",
+        "left": {
+          "heading": "People Think",
+          "items": [
+            "Fat burns off skin",
+            "Sweating removes fat"
+          ],
+          "tone": "muted"
+        },
+        "right": {
+          "heading": "Reality",
+          "items": [
+            "Lungs exhale 84% as CO2",
+            "Skin only loses water"
+          ],
+          "tone": "accent"
+        }
+      },
+      "onScreen": "Lungs: the real fat-loss organ",
+      "beat": "Re-hook - so lungs, not skin, are the real fat-loss organ.",
+      "objective": "o5a",
+      "completes": [],
+      "id": "S27",
+      "durationSec": 7.1
+    },
+    {
+      "narration": "[measured] Rest karte waqt, aapka body har barah breaths mein lagbhag do sau millilitre carbon dioxide exhale karta hai.",
+      "visual": {
+        "type": "stat",
+        "value": 200,
+        "suffix": " ml",
+        "label": "CO2 exhaled per 12 breaths at rest",
+        "source": "BMJ (Meerman & Brown), 2014"
+      },
+      "beat": "At rest, the body exhales about 200 ml of CO2 every 12 breaths.",
+      "objective": "o5a",
+      "completes": [],
+      "id": "S28",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[explaining] Jaise hi aap movement ya exercise karte hain, CO2 output badh jaata hai, aur fat utni hi tezi se nikalta hai.",
+      "visual": {
+        "type": "points",
+        "heading": "CO2 Output Increases With",
+        "items": [
+          "Walking or standing",
+          "Light exercise",
+          "Intense workouts",
+          "Faster breathing rate"
+        ],
+        "highlight": [
+          "Intense workouts"
+        ]
+      },
+      "beat": "Movement and exercise raise CO2 output, speeding up how fast fat leaves.",
+      "objective": "o5a",
+      "completes": [
+        "o5a"
+      ],
+      "id": "S29",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[serious] Lekin sweat karna ya paani peena fat kam nahi karta, woh sirf temporary water weight ka shift hai.",
+      "visual": {
+        "type": "compare",
+        "left": {
+          "heading": "Sweating / Water",
+          "items": [
+            "Loses water weight",
+            "Comes back quickly",
+            "No fat lost"
+          ],
+          "tone": "muted"
+        },
+        "right": {
+          "heading": "Real Fat Loss",
+          "items": [
+            "Triglyceride broken down",
+            "CO2 exhaled permanently"
+          ],
+          "tone": "accent"
+        }
+      },
+      "onScreen": "Water weight is not fat loss",
+      "beat": "Sweating or drinking water does not remove fat, only shifts water weight.",
+      "objective": "o5b",
+      "completes": [],
+      "id": "S30",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[emphatic] Asli fat loss ke liye energy deficit chahiye, jo body ko triglyceride oxidise karne par majboor kare.",
+      "visual": {
+        "type": "title",
+        "title": "Energy Deficit",
+        "subtitle": "Forces triglyceride oxidation",
+        "kicker": "The Real Mechanism"
+      },
+      "beat": "Real fat loss needs an energy deficit that forces triglyceride oxidation.",
+      "objective": "o5b",
+      "completes": [],
+      "id": "S31",
+      "durationSec": 7.1
+    },
+    {
+      "narration": "[calm] Agli baar jab weight kam ho, yaad rakhiye ki fat literally saans ke saath hawa mein ghul jaata hai.",
+      "visual": {
+        "type": "title",
+        "title": "The Fat Dissolves Into Air",
+        "subtitle": "Exhaled, not erased",
+        "kicker": "Closing Thought"
+      },
+      "beat": "Closing line - next time weight drops, remember the fat dissolved into thin air.",
+      "objective": "o5b",
+      "completes": [
+        "o5b"
+      ],
+      "id": "S32",
+      "durationSec": 7.9
+    }
+  ],
+  "id": "20261013-0204-claude-aur-automation-where-does-body-fa",
+  "format": "16:9"
+}
