@@ -100,15 +100,15 @@ export const Tracker: React.FC<Props> = (p) => {
 
   return (
     <div style={{position: 'absolute', left: p.box.x, top: p.box.y, width: p.box.w, height: p.box.h, overflow: 'hidden', boxSizing: 'border-box', border: `2px solid ${colors.border}`, borderRadius: 18, background: 'rgba(19,36,59,0.92)', padding: 26, display: 'flex', flexDirection: 'column', gap: 18}}>
-      <div style={{fontSize: 18, letterSpacing: 2.5, color: colors.sub, fontWeight: 600}}>{(p.title || 'Lesson progress').toUpperCase()}</div>
+      <div style={{fontSize: 20, letterSpacing: 2.5, color: colors.sub, fontWeight: 600}}>{(p.title || 'Lesson progress').toUpperCase()}</div>
       <div style={{display: 'flex', alignItems: 'baseline', gap: 10}}>
         <div style={{fontFamily: fonts.display, fontWeight: 800, fontSize: p.compact ? 46 : 64, color: colors.green, lineHeight: 1}}>{pctShown}%</div>
-        <div style={{fontSize: 18, color: colors.sub}}>complete</div>
+        <div style={{fontSize: 20, color: colors.sub}}>complete</div>
       </div>
       <div style={{height: 10, borderRadius: 5, background: colors.border, overflow: 'hidden', flex: 'none'}}>
         <div style={{width: `${pctShown}%`, height: '100%', background: colors.green}} />
       </div>
-      <div style={{display: 'flex', flexDirection: 'column', gap: p.compact ? 8 : 12, marginTop: 6, overflow: 'hidden'}}>
+      <div style={{display: 'flex', flexDirection: 'column', gap: p.compact ? 10 : 16, marginTop: 10, overflow: 'hidden'}}>
         {p.objectives.map((o) => {
           const open = showAllChildren || o === currentParent;
           return (
@@ -131,7 +131,7 @@ const rowState = (id: string, done: Set<string>, current?: string, isCurrentPare
 
 const Row: React.FC<{label: string; state: RowState; pulse: number; level: number; compact: boolean}> = ({label, state, pulse, level, compact}) => {
   const c = state === 'done' ? colors.green : state === 'current' ? colors.orange : colors.muted;
-  const size = level === 0 ? (compact ? 19 : 22) : compact ? 16 : 18;
+  const size = level === 0 ? (compact ? 21 : 25) : compact ? 18 : 21;
   return (
     <div style={{display: 'flex', alignItems: 'flex-start', gap: 12, paddingLeft: level * 26}}>
       <div style={{width: 22, height: 22, flex: 'none', marginTop: 2, borderRadius: 6, border: `2px solid ${c}`, background: state === 'done' ? colors.green : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: state === 'current' ? pulse : 1, boxShadow: state === 'current' ? `0 0 ${12 * pulse}px ${colors.orange}` : 'none'}}>
