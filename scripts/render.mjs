@@ -87,6 +87,32 @@ const chunksOf = (v) => {
 };
 const chunkFile = (c) => path.join(CACHE, `${c.key}.mp4`);
 
+const buildSound = (v, out) => {
+  const ids = v.props.sceneIds;
+  const scenes = ids && ids.length ? job.scenes.filter((s) => ids.includes(s.id)) : job.scenes;
+  const total = scenes.reduce((a, s) => a + sceneFrames(s), 0) / FPS;
+  const inputs = ['-f', 'lavfi', '-t', total.toFixed(3), '-i', 'anullsrc=r=48000:cl=stereo'];
+  const parts = [];
+  let at = 0;
+  for (const s of scenes) {
+    const dur = sceneFrames(s) / FPS;
+    const add = (rel, vol) => {
+      const f = path.join('public', rel);
+      if (!fs.existsSync(f)) return;
+      inputs.push('-i', f);
+      const k = inputs.filter((x) => x === '-i').length - 1;
+      const ms = Math.round(at * 1000);
+      parts.push(`[${k}:a]atrim=0:${dur.toFixed(3)},aresample=48000,aformat=channel_layouts=stereo,volume=${vol},adelay=${ms}|${ms}[a${k}]`);
+    };
+    if (s.audio) add(s.audio, 1);
+    if (s.sfx) add(`sfx/${s.sfx}.wav`, 0.55);
+    at += dur;
+  }
+  const n = parts.length;
+  const mix = n ? `${parts.join(';')};[0:a]${parts.map((_, i) => `[a${i + 1}]`).join('')}amix=inputs=${n + 1}:normalize=0:duration=first[out]` : '[0:a]anull[out]';
+  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', ...inputs, '-filter_complex', mix, '-map', '[out]', '-c:a', 'aac', '-b:a', '192k', out]);
+};
+
 let serveUrl;
 let browser;
 const setup = async () => {
@@ -164,10 +190,10 @@ if (cmd === 'plan') {
     fs.writeFileSync(list, v.chunks.map((c) => `file '${path.resolve(chunkFile(c))}'`).join('\n'));
     const silent = path.join('out', `${v.name}.video.mp4`);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c', 'copy', silent]);
-    // Sound for the whole video in one pass (voice + SFX), so there are no clicks at scene joins.
-    const composition = await selectComposition({serveUrl, id: 'Explainer', inputProps, puppeteerInstance: browser});
-    const sound = path.join('out', `${v.name}.aac`);
-    await renderMedia({...base(composition, inputProps, 1), codec: 'aac', outputLocation: sound});
+    // Sound: each scene's voice clip and SFX placed at the scene's start (cut at the scene's end),
+    // exactly as the composition plays them, mixed with ffmpeg (Remotion would step through every frame).
+    const sound = path.join('out', `${v.name}.m4a`);
+    buildSound(v, sound);
     execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', silent, '-i', sound, '-map', '0:v', '-map', '1:a', '-c', 'copy', '-movflags', '+faststart', path.join('out', `${v.name}.mp4`)]);
     fs.rmSync(silent);
     fs.rmSync(sound);
