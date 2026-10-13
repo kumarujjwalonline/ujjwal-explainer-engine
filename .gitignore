@@ -3,3 +3,4 @@ out
 public/jobs
 .DS_Store
 .voice-cache
+__pycache__/
