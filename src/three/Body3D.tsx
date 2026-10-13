@@ -3,7 +3,7 @@ import {ThreeCanvas} from '@remotion/three';
 import {useThree} from '@react-three/fiber';
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
-import {continueRender, delayRender, interpolate, staticFile, useCurrentFrame, useVideoConfig, Easing} from 'remotion';
+import {continueRender, delayRender, getInputProps, interpolate, staticFile, useCurrentFrame, useVideoConfig, Easing} from 'remotion';
 import {colors, fonts} from '../theme';
 import {Region, useBox, useUnit} from '../components/Box';
 
@@ -26,6 +26,10 @@ export type BodySpec = {
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 // Internal 3D resolution: GitHub has no GPU, so WebGL runs in software and cost grows with pixels.
 export const THREE_DPR = 0.6;
+// Benchmark overrides (job.bench = {dpr, aa}) so render settings can be compared on GitHub.
+const bench = () => ((getInputProps() as {job?: {bench?: {dpr?: number; aa?: boolean}}}).job?.bench || {});
+export const threeDpr = () => bench().dpr ?? THREE_DPR;
+export const threeAA = () => bench().aa ?? true;
 
 // Real anatomy: meshes from BodyParts3D (DBCLS, CC BY 4.0), built by scripts/build_anatomy.py into
 // public/anatomy/*.glb. Metres, Y up, feet at y = 0, the person faces +z (towards the camera).
@@ -250,7 +254,7 @@ export const Body3D: React.FC<BodySpec> = ({focus, steps = [], flow, caption}) =
   const panelW = portrait ? b.w : b.w * 0.34;
   return (
     <Region>
-      <ThreeCanvas width={b.w} height={b.h} dpr={THREE_DPR} style={{position: 'absolute', inset: 0}} gl={{antialias: true, preserveDrawingBuffer: true}}>
+      <ThreeCanvas width={b.w} height={b.h} dpr={threeDpr()} style={{position: 'absolute', inset: 0}} gl={{antialias: threeAA(), preserveDrawingBuffer: true}}>
         <Camera target={portrait ? target : target.clone().add(V(-0.12 * dist, 0, 0))} dist={dist} orbit={orbit} aspect={b.w / b.h} />
         <ambientLight intensity={0.45} />
         <hemisphereLight args={['#DDEBFF', '#2B1B12', 0.6]} />

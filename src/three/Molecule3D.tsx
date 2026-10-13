@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import {interpolate, useCurrentFrame, useVideoConfig, Easing} from 'remotion';
 import {colors, fonts} from '../theme';
 import {Region, useBox, useUnit} from '../components/Box';
-import {THREE_DPR} from './Body3D';
+import {threeAA, threeDpr} from './Body3D';
 
 // Production rule 17: 3D motion graphics for science. Ball-and-stick molecules from a
 // built-in library (so the AI never has to invent coordinates), slowly turning; a reaction
@@ -157,7 +157,7 @@ export const Molecule3D: React.FC<MoleculeSpec> = ({molecules = ['CO2'], reactio
   const label = (txt: string, o: number) => <div style={{fontFamily: fonts.display, fontWeight: 700, fontSize: 26 * u, color: colors.sub, opacity: o}}>{txt}</div>;
   return (
     <Region>
-      <ThreeCanvas width={b.w} height={b.h} dpr={THREE_DPR} style={{position: 'absolute', inset: 0}} gl={{antialias: true, preserveDrawingBuffer: true}}>
+      <ThreeCanvas width={b.w} height={b.h} dpr={threeDpr()} style={{position: 'absolute', inset: 0}} gl={{antialias: threeAA(), preserveDrawingBuffer: true}}>
         <Cam z={reaction ? 17 : 12} aspect={b.w / b.h} />
         <ambientLight intensity={0.6} />
         <directionalLight position={[3, 4, 6]} intensity={1.2} />

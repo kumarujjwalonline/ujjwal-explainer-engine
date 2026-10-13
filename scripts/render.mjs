@@ -136,6 +136,21 @@ if (cmd === 'plan') {
     console.log(`[${i + 1}/${mine.length}] ${c.video} ${c.scene} (${c.to - c.from + 1} frames) ${((Date.now() - t0) / 1000).toFixed(0)} s`);
   }
   await browser.close({silent: true});
+} else if (cmd === 'bench') {
+  // bench <sceneId> <from> <to> <concurrency> <gl> <dpr> <aa>: times one scene's frames with given settings
+  const [sid, a, b, conc, gl, dpr, aa] = args;
+  const props = {job: {...job, bench: {dpr: Number(dpr), aa: aa === 'true'}}, format: '16:9'};
+  serveUrl = await bundle({entryPoint: path.resolve('src/index.ts'), publicDir: path.resolve('public')});
+  browser = await openBrowser('chrome', {chromiumOptions: {gl}});
+  let start = 0;
+  for (const s of job.scenes) { if (s.id === sid) break; start += sceneFrames(s); }
+  const composition = await selectComposition({serveUrl, id: 'Explainer', inputProps: props, puppeteerInstance: browser});
+  const t0 = Date.now();
+  await renderMedia({composition, serveUrl, inputProps: props, codec: 'h264', muted: true, chromiumOptions: {gl}, puppeteerInstance: browser, concurrency: Number(conc), frameRange: [start + Number(a), start + Number(b)], outputLocation: 'out/bench.mp4'});
+  const sec = (Date.now() - t0) / 1000;
+  const frames = Number(b) - Number(a) + 1;
+  console.log(`::notice title=bench ${sid} conc=${conc} gl=${gl} dpr=${dpr} aa=${aa}::${frames} frames in ${sec.toFixed(0)} s = ${(sec / frames).toFixed(2)} s/frame`);
+  await browser.close({silent: true});
 } else if (cmd === 'assemble') {
   const plan = JSON.parse(fs.readFileSync('out/render-plan.json', 'utf8'));
   await setup();
