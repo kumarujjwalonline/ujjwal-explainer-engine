@@ -43,6 +43,10 @@ HINDI_NUMBERS = {
     "तीन", "चार", "पांच", "पाँच", "छह", "सात", "आठ", "नौ", "दस", "ग्यारह", "बारह", "बीस", "तीस", "चालीस",
     "पचास", "साठ", "सत्तर", "अस्सी", "नब्बे", "सौ", "हज़ार", "हजार", "लाख", "करोड़", "दशमलव", "प्रतिशत", "डेढ़", "ढाई",
 }
+# Speech recognition writes spoken numbers as digits, so number words can't be matched word by word.
+NUMBER_WORDS = set("""zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen
+sixteen seventeen eighteen nineteen twenty thirty forty fifty sixty seventy eighty ninety hundred thousand
+million billion lakh crore point percent half quarter first second third""".split())
 # Vowel classes that speech recognition mixes up; treated as the same sound.
 SAME = {"aw": "o", "o": "o", "au": "o", "i": "i", "u": "u", "e": "e", "ai": "ai", "a": "a", "aa": "aa", "ri": "ri"}
 
@@ -103,7 +107,7 @@ def english_word_check(expected, wl, guide):
     problems = []
     n_exp, n_heard = max(1, len(exp_words)), max(1, len(heard))
     for idx, w in enumerate(exp_words):
-        if is_devanagari(w) or not re.search(r"[A-Za-z]", w):
+        if is_devanagari(w) or not re.search(r"[A-Za-z]", w) or w.lower() in NUMBER_WORDS:
             continue
         say = guide.get(w.lower())
         if not say:
@@ -115,7 +119,7 @@ def english_word_check(expected, wl, guide):
         centre = idx / n_exp * n_heard
         best, best_r = None, 0.0
         for j, h in enumerate(heard):
-            if abs(j - centre) > max(3, 0.35 * n_heard):
+            if abs(j - centre) > max(2, 0.25 * n_heard):
                 continue
             tok = re.sub(r"[^\wऀ-ॿ]", "", h["w"])
             if not tok:
@@ -123,7 +127,7 @@ def english_word_check(expected, wl, guide):
             r = SequenceMatcher(None, target_sk, skeleton(tok)).ratio()
             if r > best_r:
                 best, best_r = dict(h, tok=tok), r
-        if best is None or best_r < 0.5:
+        if best is None or best_r < 0.75 or re.search(r"\d", best["tok"]):
             continue  # not found reliably; the line score covers missing words
         tok = best["tok"]
         dur = best["e"] - best["s"]
@@ -262,7 +266,7 @@ def analyse(files):
         freqs = np.fft.rfftfreq(len(x), 1 / 16000)
         low += spec[(freqs >= 60) & (freqs < 250)].sum()
         total += spec[(freqs >= 60) & (freqs < 4000)].sum()
-    return (float(np.median(f0s)) if f0s else 0.0), (low / total if total else 0.0)
+    return (float(np.median(f0s)) if f0s else 0.0), (float(low / total) if total else 0.0)
 
 
 def voice():
