@@ -109,8 +109,12 @@ for s in scenes:
     query = (v.get("query") or "").strip()
     need = (s.get("durationSec") or 6) + 0.5
     pick, err = None, None
-    words = query.split()
-    tries = [query] + ([" ".join(words[:3])] if len(words) > 3 else [])
+    # Commons search is literal: try the full query, then its key words, then the two main ones.
+    content = [w for w in re.findall(r"[a-zA-Z]+", query.lower()) if w not in STOP and len(w) > 2]
+    tries = []
+    for t in [query, " ".join(content), " ".join(content[1:3]), " ".join(content[:2]), max(content, key=len) if content else ""]:
+        if t and t not in tries:
+            tries.append(t)
     for q in tries:  # Commons search is literal, so shorten the query if nothing matches
         for finder in (commons, pexels):
             try:
