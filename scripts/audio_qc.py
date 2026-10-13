@@ -2,18 +2,22 @@
 
 usage:
   python scripts/audio_qc.py check   transcribe every selected clip (and any retakes), keep the best
-                                     take per line, write out/audio-qc.json and out/retake.txt
+                                     take per line, write out/audio-qc.json, out/retake.txt, out/force.json
   python scripts/audio_qc.py voice   measure pitch and bass across the narration and deepen the
                                      voice slightly when it sounds light; updates out/audio-qc.json
 
-How a line is judged:
-  - Whisper (large-v3-turbo, on the runner's CPU) writes down what was actually said.
-  - Script and transcript are reduced to a sound skeleton (Devanagari transliterated, vowels
-    dropped, similar letters merged) so Hindi/English spelling differences don't count as errors.
-  - Similarity below RETAKE_BELOW, or Hindi number words that are not in the script
-    (numbers must be spoken in English), asks for a fresh take. At most MAX_TAKES per line.
-  - Words of the script with no close match in the transcript are listed as "suspects", so
-    Claude can review them and suggest pronunciation fixes.
+How a line is judged (production rules 22 and the audio rules):
+  - Whisper (large-v3-turbo, CPU) writes down what was actually said. In Hindi mode it spells
+    English words the way they sound, in Devanagari.
+  - Line score: script vs transcript reduced to a consonant skeleton, so spelling differences
+    between Hindi and English letters don't count.
+  - English words: each one is looked up in the Indian-accent pronunciation dictionary
+    (pronunciations/indian-english.json plus the job's own guide). The heard word must have the
+    dictionary's vowels: "fat" = फैट (ai); a heard फट (a) or a clipped "ft" is a mispronunciation.
+    Words spoken too fast to carry their vowel are flagged as clipped.
+  - Hindi number words that are not in the script mean a number was spoken in Hindi.
+  - A flagged line is re-recorded (up to MAX_TAKES takes). Before the last take, words that are
+    still wrong are forced: the voice gets the dictionary spelling for them (out/force.json).
 """
 import json
 import os
@@ -25,18 +29,22 @@ from difflib import SequenceMatcher
 
 import numpy as np
 
-RETAKE_BELOW = float(os.environ.get("QC_RETAKE_BELOW", "72"))
+sys.path.insert(0, os.path.dirname(__file__))
+from devanagari import is_devanagari, roman, vowels  # noqa: E402
+
+RETAKE_BELOW = float(os.environ.get("QC_RETAKE_BELOW", "70"))
 MAX_TAKES = int(os.environ.get("QC_MAX_TAKES", "3"))
-# A "medium to heavy" male narration voice. Deepen only when the median pitch is above this.
-TARGET_F0 = float(os.environ.get("QC_TARGET_F0", "118"))
+MAX_RETAKES_PER_ROUND = int(os.environ.get("QC_MAX_RETAKES", "12"))
+TARGET_F0 = float(os.environ.get("QC_TARGET_F0", "118"))  # medium-heavy male narration
 MAX_SHIFT = 0.94  # never lower pitch by more than 6 %, so it still sounds like Ujjwal
 QC_PATH = "out/audio-qc.json"
 
 HINDI_NUMBERS = {
-    "एक", "दो", "तीन", "चार", "पांच", "पाँच", "छह", "छः", "सात", "आठ", "नौ", "दस", "ग्यारह", "बारह",
-    "बीस", "तीस", "चालीस", "पचास", "साठ", "सत्तर", "अस्सी", "नब्बे", "सौ", "हज़ार", "हजार", "लाख",
-    "करोड़", "दशमलव", "प्रतिशत", "डेढ़", "ढाई",
+    "तीन", "चार", "पांच", "पाँच", "छह", "सात", "आठ", "नौ", "दस", "ग्यारह", "बारह", "बीस", "तीस", "चालीस",
+    "पचास", "साठ", "सत्तर", "अस्सी", "नब्बे", "सौ", "हज़ार", "हजार", "लाख", "करोड़", "दशमलव", "प्रतिशत", "डेढ़", "ढाई",
 }
+# Vowel classes that speech recognition mixes up; treated as the same sound.
+SAME = {"aw": "o", "o": "o", "au": "o", "i": "i", "u": "u", "e": "e", "ai": "ai", "a": "a", "aa": "aa", "ri": "ri"}
 
 
 def load(path, default=None):
@@ -52,27 +60,14 @@ def save(path, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-# ---------- text normalisation ----------
-_translit = None
-
-
-def latin(text):
-    global _translit
-    if _translit is None:
-        from indic_transliteration import sanscript
-        from indic_transliteration.sanscript import transliterate
-
-        _translit = lambda t: transliterate(t, sanscript.DEVANAGARI, sanscript.ITRANS)
-    return _translit(text)
-
-
+# ---------- text ----------
 def words(text):
     text = re.sub(r"\[[^\]]+\]", " ", text)
-    return [w for w in re.split(r"[^\wऀ-ॿ]+", text) if w]
+    return [w for w in re.split(r"[^\wऀ-ॿ']+", text) if w]
 
 
 def skeleton(word):
-    w = latin(word).lower()
+    w = roman(word) if is_devanagari(word) else word.lower()
     w = re.sub(r"[^a-z]", "", w)
     for a, b in (("ph", "f"), ("w", "v"), ("z", "j"), ("q", "k"), ("x", "ks"), ("ck", "k"), ("c", "k"), ("sh", "s"), ("th", "t"), ("dh", "d"), ("bh", "b"), ("gh", "g"), ("kh", "k"), ("jh", "j"), ("y", "i")):
         w = w.replace(a, b)
@@ -89,19 +84,60 @@ def similarity(expected, heard):
     return round(SequenceMatcher(None, a, b).ratio() * 100, 1)
 
 
-def suspects(expected, heard):
-    """Script words with no close match in what was heard."""
-    exp = words(expected)
-    heard_sk = [skeleton(w) for w in words(heard)]
-    out = []
-    for w in exp:
-        sk = skeleton(w)
-        if len(sk) < 3:
+def vclass(seq):
+    return [SAME.get(v, v) for v in seq]
+
+
+def load_guide():
+    d = load("pronunciations/indian-english.json", {}) or {}
+    g = {k.lower(): v for k, v in (d.get("guide") or {}).items()}
+    g.update({k.lower(): v for k, v in (d.get("always") or {}).items()})
+    g.update({k.lower(): v for k, v in (load("out/guide.json", {}) or {}).items()})
+    return g
+
+
+def english_word_check(expected, wl, guide):
+    """Each English word with a dictionary entry must be heard with the dictionary's vowels."""
+    exp_words = words(expected)
+    heard = [w for w in wl if w["w"]]
+    problems = []
+    n_exp, n_heard = max(1, len(exp_words)), max(1, len(heard))
+    for idx, w in enumerate(exp_words):
+        if is_devanagari(w) or not re.search(r"[A-Za-z]", w):
             continue
-        best = max((SequenceMatcher(None, sk, h).ratio() for h in heard_sk), default=0)
-        if best < 0.6:
-            out.append(w)
-    return out[:6]
+        say = guide.get(w.lower())
+        if not say:
+            continue
+        target_sk = skeleton(say)
+        if len(target_sk) < 1:
+            continue
+        # Look for the heard word near the same position in the line.
+        centre = idx / n_exp * n_heard
+        best, best_r = None, 0.0
+        for j, h in enumerate(heard):
+            if abs(j - centre) > max(3, 0.35 * n_heard):
+                continue
+            tok = re.sub(r"[^\wऀ-ॿ]", "", h["w"])
+            if not tok:
+                continue
+            r = SequenceMatcher(None, target_sk, skeleton(tok)).ratio()
+            if r > best_r:
+                best, best_r = dict(h, tok=tok), r
+        if best is None or best_r < 0.5:
+            continue  # not found reliably; the line score covers missing words
+        tok = best["tok"]
+        dur = best["e"] - best["s"]
+        if len(w) >= 3 and dur < 0.12:
+            problems.append({"word": w, "expected": say, "heard": tok, "why": f"clipped ({dur:.2f}s)"})
+            continue
+        ev = vclass(vowels(say))
+        if is_devanagari(tok):
+            hv = vclass(vowels(tok))
+            if ev and (len(hv) < len(ev) or SequenceMatcher(None, ev, hv).ratio() < 0.67):
+                problems.append({"word": w, "expected": say, "heard": tok, "why": "vowel sounds different" if hv else "vowel missing"})
+        elif ev and not re.search(r"[aeiouy]", tok.lower()):
+            problems.append({"word": w, "expected": say, "heard": tok, "why": "vowel missing"})
+    return problems
 
 
 def hindi_numbers(expected, heard):
@@ -113,22 +149,28 @@ def hindi_numbers(expected, heard):
 _model = None
 
 
+def pcm(path, rate=16000):
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-ac", "1", "-ar", str(rate), "-f", "f32le", "-"], capture_output=True, check=True).stdout
+    return np.frombuffer(raw, dtype=np.float32)
+
+
 def transcribe(path):
     global _model
     if _model is None:
         from faster_whisper import WhisperModel
 
         _model = WhisperModel(os.environ.get("QC_WHISPER", "large-v3-turbo"), device="cpu", compute_type="int8")
-    segments, _ = _model.transcribe(path, language="hi", beam_size=5, word_timestamps=True, vad_filter=False, condition_on_previous_text=False)
+    audio = pcm(path).copy()  # decoded with ffmpeg; avoids PyAV version issues
+    segments, _ = _model.transcribe(audio, language="hi", beam_size=5, word_timestamps=True, vad_filter=False, condition_on_previous_text=False)
     text, wl = [], []
     for seg in segments:
         text.append(seg.text.strip())
         for w in seg.words or []:
-            wl.append({"w": w.word.strip(), "s": round(w.start, 2), "e": round(w.end, 2)})
+            wl.append({"w": w.word.strip(), "s": round(w.start, 2), "e": round(w.end, 2), "p": round(w.probability, 2)})
     return " ".join(text).strip(), wl
 
 
-def judge(scene, path):
+def judge(scene, path, guide):
     heard, wl = transcribe(path)
     expected = scene["narration"]
     return {
@@ -136,19 +178,26 @@ def judge(scene, path):
         "heard": heard,
         "words": wl,
         "score": similarity(expected, heard),
-        "suspects": suspects(expected, heard),
+        "mispronounced": english_word_check(expected, wl, guide),
         "hindi_numbers": hindi_numbers(expected, heard),
+        "unsure": [w["w"] for w in wl if w.get("p", 1) < 0.35][:6],
     }
 
 
 def bad(r):
-    return r["score"] < RETAKE_BELOW or bool(r["hindi_numbers"])
+    return r["score"] < RETAKE_BELOW or bool(r["hindi_numbers"]) or bool(r["mispronounced"])
+
+
+def rank(r):
+    return (0 if r["hindi_numbers"] else 1, -len(r["mispronounced"]), r["score"])
 
 
 def check():
     job = load("out/job.final.json")
     sel = load("out/selected.json", {"ids": []})
     qc = load(QC_PATH, {"lines": {}})
+    guide = load_guide()
+    force = load("out/force.json", {}) or {}
     scenes = {s["id"]: s for s in job["scenes"]}
     out_dir = os.path.join("public", "jobs", job["id"])
     retake = []
@@ -157,20 +206,18 @@ def check():
         main = os.path.join(out_dir, f"{sid}.mp3")
         line = qc["lines"].get(sid)
         if line is None:
-            r = judge(s, main)
+            r = judge(s, main, guide)
             line = {"id": sid, "expected": s["narration"], "takes": 1, **r, "retaken": False}
-            print(f"{sid}: {r['score']}  {r['heard'][:70]}")
-        # Judge any new retakes of this line and keep the best one.
+            print(f"{sid}: {r['score']}  {'MISPRONOUNCED ' + str([m['word'] for m in r['mispronounced']]) if r['mispronounced'] else ''} {r['heard'][:60]}")
         for n in range(2, MAX_TAKES + 1):
             take = os.path.join(out_dir, f"{sid}.take{n}.mp3")
             if not os.path.exists(take) or n <= line["takes"]:
                 continue
-            r = judge(s, take)
+            r = judge(s, take, guide)
             line["takes"] = n
             line["retaken"] = True
-            print(f"{sid} take {n}: {r['score']} (was {line['score']})")
-            better = (not r["hindi_numbers"] and line["hindi_numbers"]) or (bool(r["hindi_numbers"]) == bool(line["hindi_numbers"]) and r["score"] > line["score"])
-            if better:
+            print(f"{sid} take {n}: {r['score']} mispronounced={[m['word'] for m in r['mispronounced']]} (was {line['score']})")
+            if rank(r) > rank(line):
                 shutil.copyfile(take, main)
                 line.update(r)
                 line["file"] = main
@@ -178,26 +225,28 @@ def check():
         qc["lines"][sid] = line
         if line["flagged"] and line["takes"] < MAX_TAKES:
             retake.append(sid)
+            # Before the last take, give the voice the dictionary spelling of words still said wrongly.
+            if line["takes"] == MAX_TAKES - 1 and line["mispronounced"]:
+                force[sid] = sorted({m["word"] for m in line["mispronounced"]})
+    retake = retake[:MAX_RETAKES_PER_ROUND]
     lines = [qc["lines"][i] for i in sel["ids"]]
     qc["summary"] = {
         "lines": len(lines),
         "average_score": round(sum(l["score"] for l in lines) / max(1, len(lines)), 1),
         "retaken": [l["id"] for l in lines if l["retaken"]],
-        "still_flagged": [{"id": l["id"], "score": l["score"], "suspects": l["suspects"], "hindi_numbers": l["hindi_numbers"], "heard": l["heard"]} for l in lines if l["flagged"]],
-        "suspect_words": sorted({w for l in lines for w in l["suspects"]}),
+        "forced": [{"id": k, "words": v} for k, v in force.items()],
+        "still_flagged": [{"id": l["id"], "score": l["score"], "mispronounced": l["mispronounced"], "hindi_numbers": l["hindi_numbers"], "heard": l["heard"]} for l in lines if l["flagged"]],
+        "english_words_checked": sum(1 for l in lines for w in words(l["expected"]) if re.search(r"[A-Za-z]", w) and w.lower() in guide),
+        "lines_heard": [{"id": l["id"], "said": l["expected"], "heard": l["heard"], "score": l["score"], "unsure": l.get("unsure", [])} for l in lines],
     }
     save(QC_PATH, qc)
+    save("out/force.json", force)
     with open("out/retake.txt", "w") as f:
         f.write(",".join(retake))
-    print(f"Retake next: {retake or 'none'}")
+    print(f"Retake next: {retake or 'none'}  forced: {force or 'none'}")
 
 
 # ---------- voice depth ----------
-def pcm(path, rate=16000):
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-i", path, "-ac", "1", "-ar", str(rate), "-f", "f32le", "-"], capture_output=True, check=True).stdout
-    return np.frombuffer(raw, dtype=np.float32)
-
-
 def analyse(files):
     import parselmouth
 
@@ -227,8 +276,6 @@ def voice():
     factor = 1.0
     if f0 > TARGET_F0:
         factor = max(MAX_SHIFT, TARGET_F0 / f0)
-    # Low end below 250 Hz: if the voice is thin, lift it a little. Thresholds were set on the
-    # first measured runs and can be tuned with QC_BASS_MIN.
     bass_min = float(os.environ.get("QC_BASS_MIN", "0.18"))
     bass_gain = 3.0 if bass < bass_min else (1.5 if factor < 1 else 0.0)
     filters = []

@@ -50,7 +50,7 @@ jobs:
 
       - name: Audio check tools (free speech recognition)
         if: inputs.mode != 'preview'
-        run: pip install --quiet faster-whisper praat-parselmouth indic-transliteration numpy pillow
+        run: pip install --quiet faster-whisper praat-parselmouth numpy pillow
 
       - name: Restore speech model
         if: inputs.mode != 'preview'
@@ -84,6 +84,17 @@ jobs:
             msg=$(grep -v '^\s*$' out/voice.log | tail -n 25 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
             echo "::error title=Voice step failed::$msg"
             exit 1
+          fi
+
+      - name: Remember pronunciations for future videos
+        if: success() && inputs.mode != 'preview'
+        run: |
+          if [ "$(python3 scripts/remember_pron.py)" = "changed" ]; then
+            git config user.name "explainer-bot"
+            git config user.email "explainer-bot@users.noreply.github.com"
+            git add pronunciations/indian-english.json
+            git commit -m "Pronunciation dictionary: learned from ${{ inputs.job_id }}"
+            for i in 1 2 3; do git pull --rebase -q origin main && git push -q origin HEAD:main && break; sleep 3; done
           fi
 
       - name: Save voice clips for later runs

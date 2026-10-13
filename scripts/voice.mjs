@@ -41,11 +41,29 @@ const settings = {
   use_speaker_boost: true,
 };
 
-// Pronunciation fixes: [{word, say_as}] replace the word only in the text sent to ElevenLabs.
+// Pronunciation (production rule 22). The Indian-English dictionary says how each English word
+// should sound. Words in its "always" list, the job's own fixes from change requests, and words
+// the audio check forced for a scene are replaced only in the text sent to ElevenLabs.
 const esc = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const fixes = (jv.pronunciations || []).filter((x) => x && x.word && x.say_as);
-const spoken = (text) =>
-  fixes.reduce((t, x) => t.replace(new RegExp(`(^|[^\\p{L}\\p{M}])${esc(x.word)}(?=$|[^\\p{L}\\p{M}])`, 'giu'), `$1${x.say_as}`), text);
+const readJson = (f, d) => {
+  try {
+    return JSON.parse(fs.readFileSync(f, 'utf8'));
+  } catch {
+    return d;
+  }
+};
+const dict = readJson('pronunciations/indian-english.json', {});
+const always = Object.entries(dict.always || {}).map(([word, say_as]) => ({word, say_as}));
+const guide = {...(dict.guide || {}), ...(dict.always || {}), ...(jv.guide || {})};
+const fixes = [...always, ...(jv.pronunciations || []).filter((x) => x && x.word && x.say_as)];
+const forced = readJson('out/force.json', {});
+const replaceWords = (text, list) =>
+  list.reduce((t, x) => t.replace(new RegExp(`(^|[^\\p{L}\\p{M}])${esc(x.word)}(?=$|[^\\p{L}\\p{M}])`, 'giu'), `$1${x.say_as}`), text);
+const spoken = (text, sceneId) => {
+  const extra = (forced[sceneId] || []).map((w) => ({word: w, say_as: guide[w.toLowerCase()]})).filter((x) => x.say_as);
+  return replaceWords(text, [...fixes, ...extra]);
+};
+fs.writeFileSync('out/guide.json', JSON.stringify(Object.fromEntries(Object.entries(guide).map(([k, v]) => [k.toLowerCase(), v]))));
 
 // Unchanged lines reuse audio from earlier runs of this job (restored by the workflow cache),
 // so a change request only spends ElevenLabs credits on the lines that changed.
@@ -125,16 +143,16 @@ const run = async () => {
     let generated = 0;
     for (const s of scenes) {
       const file = path.join(outDir, `${s.id}.mp3`);
-      const cached = path.join(cacheDir, `${keyFor(spoken(s.narration))}.mp3`);
+      const cached = path.join(cacheDir, `${keyFor(spoken(s.narration, s.id))}.mp3`);
       if (fs.existsSync(cached)) {
         fs.copyFileSync(cached, file);
         reused++;
       } else {
-        await tts(spoken(s.narration), file);
+        await tts(spoken(s.narration, s.id), file);
         generated++;
       }
       s.audio = `jobs/${job.id}/${s.id}.mp3`;
-      s.spokenText = spoken(s.narration);
+      s.spokenText = spoken(s.narration, s.id);
       console.log(`${s.id}: ${measure(s).toFixed(2)}s`);
     }
     console.log(`Audio: ${generated} lines generated, ${reused} reused from earlier runs`);
@@ -149,7 +167,7 @@ const run = async () => {
     for (const id of ids) {
       const s = scenesById.get(id);
       if (!s) continue;
-      await tts(spoken(s.narration), path.join(outDir, `${id}.take${take}.mp3`));
+      await tts(spoken(s.narration, id), path.join(outDir, `${id}.take${take}.mp3`));
       console.log(`Retake ${take} of ${id}`);
     }
     return;
