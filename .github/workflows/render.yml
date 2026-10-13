@@ -29,7 +29,7 @@ concurrency:
 jobs:
   render:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       JOB: jobs/${{ inputs.job_id }}.json
       TAG: render-${{ inputs.job_id }}-${{ github.run_number }}
@@ -80,7 +80,11 @@ jobs:
         run: |
           mkdir -p out
           set -o pipefail
-          bash scripts/voice_qc.sh "$JOB" ${{ inputs.mode == 'preview' && 'none' || inputs.mode }} 2>&1 | tee out/voice.log
+          if ! bash scripts/voice_qc.sh "$JOB" ${{ inputs.mode == 'preview' && 'none' || inputs.mode }} 2>&1 | tee out/voice.log; then
+            msg=$(grep -v '^\s*$' out/voice.log | tail -n 25 | sed 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=Voice step failed::$msg"
+            exit 1
+          fi
 
       - name: Save voice clips for later runs
         if: always()
@@ -128,7 +132,7 @@ jobs:
         run: |
           cd out 2>/dev/null || exit 0
           shopt -s nullglob
-          logs=(*.log audio-qc.json)
+          logs=(*.log audio-qc*.json)
           [ ${#logs[@]} -gt 0 ] && gh release create "debug-${{ inputs.job_id }}-${{ github.run_number }}" --title "debug ${{ inputs.job_id }}" --notes "Logs of a failed run" --prerelease "${logs[@]}" || true
 
       - name: Tell n8n about a failure
