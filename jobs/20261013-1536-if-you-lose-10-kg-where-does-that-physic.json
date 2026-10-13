@@ -1155,6 +1155,10 @@
     }
   ],
   "voice": {
+    "stability": 0.5,
+    "similarity_boost": 0.75,
+    "style": 0.3,
+    "speed": 1,
     "guide": {}
   },
   "id": "20261013-1536-if-you-lose-10-kg-where-does-that-physic",
@@ -1205,5 +1209,6 @@
         "verdict": ""
       }
     ]
-  }
+  },
+  "revision": 1
 }
