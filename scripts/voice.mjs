@@ -122,9 +122,11 @@ const pickScenes = (mode) => {
   return out;
 };
 
+// Pause between lines (production rules, locked voice): 0.75 s after every line.
+const GAP = Number(process.env.LINE_GAP ?? 0.75);
 const measure = (s) => {
   const d = probe(path.join('public', s.audio));
-  s.durationSec = Math.round((d + 0.45) * 100) / 100; // a breath after each line
+  s.durationSec = Math.round((d + GAP) * 100) / 100;
   return d;
 };
 
@@ -192,9 +194,10 @@ const run = async () => {
       files.push(path.join('public', s.audio));
     }
     if (sel.mode === 'sample' && files.length) {
-      const list = path.join(outDir, 'list.txt');
-      fs.writeFileSync(list, files.map((f) => `file '${path.resolve(f)}'`).join('\n'));
-      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'concat', '-safe', '0', '-i', list, '-c:a', 'libmp3lame', '-b:a', '128k', 'out/voice-sample.mp3']);
+      // Same 0.75 s pause between lines as in the video.
+      const inputs = files.flatMap((f) => ['-i', f]);
+      const graph = files.map((_, i) => `[${i}:a]aformat=sample_rates=44100:channel_layouts=mono,apad=pad_dur=${GAP}[a${i}]`).join(';') + ';' + files.map((_, i) => `[a${i}]`).join('') + `concat=n=${files.length}:v=0:a=1[out]`;
+      execFileSync('ffmpeg', ['-y', '-loglevel', 'error', ...inputs, '-filter_complex', graph, '-map', '[out]', '-c:a', 'libmp3lame', '-b:a', '160k', 'out/voice-sample.mp3']);
       console.log('Voice sample: out/voice-sample.mp3');
     }
     fs.writeFileSync('out/job.final.json', JSON.stringify(job, null, 2));

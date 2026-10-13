@@ -292,7 +292,10 @@ def voice():
     bass_min = float(os.environ.get("QC_BASS_MIN", "0.18"))
     low_gain = 4.5 if bass < bass_min else 3.0
     body = float(os.environ.get("QC_BODY", "1"))  # 0 turns the treatment off
-    filters = []
+    # Trim the silence ElevenLabs leaves before and after each line, so the pause between
+    # lines is exactly the one the render adds (production rules: 0.75 s).
+    trim = "silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.04,areverse,silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.06,areverse"
+    filters = [trim]
     if factor < 0.999:
         filters += [f"asetrate=44100*{factor:.4f}", "aresample=44100", f"atempo={1 / factor:.4f}"]
     if body > 0:
