@@ -25,13 +25,13 @@ jobs:
       - name: Build models
         if: inputs.step == 'build'
         run: |
-          pip install --break-system-packages trimesh fast-simplification numpy
+          pip install --break-system-packages trimesh fast-simplification numpy scipy networkx
           mkdir -p /tmp/obj
           for z in partof isa; do
             curl -fsSL --retry 3 -o /tmp/$z.zip https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/${z}_BP3D_4.0_obj_99.zip
             unzip -qo /tmp/$z.zip -d /tmp/obj/$z && rm /tmp/$z.zip
           done
-          python3 scripts/build_anatomy.py /tmp/obj data/bodyparts3d public/anatomy 2>&1 | tee /tmp/build.log
+          set -o pipefail; python3 scripts/build_anatomy.py /tmp/obj data/bodyparts3d public/anatomy 2>&1 | tee /tmp/build.log || { tail -15 /tmp/build.log | sed "s/^/::error::/"; exit 1; }
           grep -E 'warning|Error|Traceback' /tmp/build.log | head -5 | sed 's/^/::error::/' || true
       - name: Commit
         run: |
