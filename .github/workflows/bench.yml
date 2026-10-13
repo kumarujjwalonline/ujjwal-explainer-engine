@@ -12,13 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         v:
-          - {conc: 4, gl: swangle, dpr: 0.6, aa: true}
-          - {conc: 4, gl: swangle, dpr: 0.6, aa: false}
-          - {conc: 1, gl: swangle, dpr: 0.6, aa: false}
+          - {conc: 2, gl: angle, dpr: 0.6, aa: false}
+          - {conc: 3, gl: angle, dpr: 0.6, aa: false}
+          - {conc: 2, gl: angle, dpr: 0.75, aa: false}
+          - {conc: 2, gl: angle, dpr: 0.6, aa: true}
           - {conc: 2, gl: swangle, dpr: 0.6, aa: false}
-          - {conc: 4, gl: swangle, dpr: 0.4, aa: false}
-          - {conc: 4, gl: swiftshader, dpr: 0.6, aa: false}
-          - {conc: 4, gl: angle, dpr: 0.6, aa: false}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -29,3 +27,9 @@ jobs:
       - run: |
           mkdir -p out && cp jobs/${{ inputs.job_id }}.json out/job.final.json
           node scripts/render.mjs out/job.final.json bench ${{ inputs.scene }} 30 89 ${{ matrix.v.conc }} ${{ matrix.v.gl }} ${{ matrix.v.dpr }} ${{ matrix.v.aa }}
+      - name: Sample frame
+        run: ffmpeg -loglevel error -ss 1 -i out/bench.mp4 -frames:v 1 out/bench-${{ matrix.v.gl }}-${{ matrix.v.conc }}-${{ matrix.v.dpr }}-${{ matrix.v.aa }}.jpg
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bench-${{ matrix.v.gl }}-${{ matrix.v.conc }}-${{ matrix.v.dpr }}-${{ matrix.v.aa }}
+          path: out/bench-*.jpg
