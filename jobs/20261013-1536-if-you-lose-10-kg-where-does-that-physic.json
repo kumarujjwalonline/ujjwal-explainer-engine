@@ -332,7 +332,7 @@
   ],
   "scenes": [
     {
-      "narration": "[curious] जब कोई इंसान ten kilo वज़न कम करता है, तो वो fat शरीर से निकलकर जाता असल में कहाँ है?",
+      "narration": "[curious] जब कोई इंसान ten kilo वज़न कम करता है, तो वो fat शरीर से निकलकर असल में जाता कहाँ है?",
       "visual": {
         "type": "question",
         "text": "Where does the lost fat actually go?",
@@ -1210,5 +1210,8 @@
       }
     ]
   },
-  "revision": 1
+  "revision": 2,
+  "sample_scenes": [
+    "S01"
+  ]
 }
