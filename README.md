@@ -83,3 +83,7 @@ n8n edits the job file in `jobs/` when you ask for changes on WhatsApp, then re-
 - `voice`: `{ "stability": 0 | 0.5 | 1, "similarity_boost": 0–1, "style": 0–1, "speed": 0.7–1.2, "pronunciations": [{ "word": "triglyceride", "say_as": "try-glis-uh-ride" }] }`. Pronunciations change only the text sent to ElevenLabs, never the on-screen text.
 - `sample_scenes`: scene ids the 30-second voice sample should play (the changed lines). Without it, the sample is the opening ~30 seconds.
 - Voice clips are cached per job between runs (GitHub Actions cache), keyed by text + voice settings, so only changed lines are re-recorded.
+
+## Pauses
+
+`[pause]` inside a narration line marks the end of one sentence and the start of the next. The voice step records the parts separately and joins them with exactly 0.75 s of silence (`LINE_GAP`); the tag is never sent to ElevenLabs. Every line is also followed by 0.75 s of silence in the video and the voice sample.

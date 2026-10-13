@@ -102,6 +102,29 @@ const tts = async (text, file) => {
   }
 };
 
+// [pause] in the script (production rules): the line is recorded in parts, split at each
+// [pause], and joined with exactly GAP seconds of silence. The tag itself is never sent to ElevenLabs.
+const PAUSE = /\s*\[pause\]\s*/i;
+const recordLine = async (text, sceneId, file) => {
+  const parts = text.split(PAUSE).map((x) => x.trim()).filter(Boolean);
+  if (parts.length <= 1) return tts(text.replace(PAUSE, ' '), file);
+  const tag = (parts[0].match(/^\[[^\]]+\]/) || [''])[0];
+  const files = [];
+  for (let i = 0; i < parts.length; i++) {
+    const t = i > 0 && tag && !/^\[[^\]]+\]/.test(parts[i]) ? `${tag} ${parts[i]}` : parts[i];
+    const f = `${file}.part${i}.mp3`;
+    await tts(t, f);
+    files.push(f);
+  }
+  const trim = 'silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.04,areverse,silenceremove=start_periods=1:start_threshold=-50dB:start_silence=0.06,areverse';
+  const graph =
+    files.map((_, i) => `[${i}:a]aformat=sample_rates=44100:channel_layouts=mono,${trim}${i < files.length - 1 ? `,apad=pad_dur=${GAP}` : ''}[p${i}]`).join(';') +
+    ';' + files.map((_, i) => `[p${i}]`).join('') + `concat=n=${files.length}:v=0:a=1[out]`;
+  execFileSync('ffmpeg', ['-y', '-loglevel', 'error', ...files.flatMap((f) => ['-i', f]), '-filter_complex', graph, '-map', '[out]', '-c:a', 'libmp3lame', '-b:a', '192k', file]);
+  files.forEach((f) => fs.unlinkSync(f));
+  console.log(`${sceneId}: ${parts.length} parts joined with ${GAP}s pauses`);
+};
+
 const selectedPath = 'out/selected.json';
 const readSelected = () => JSON.parse(fs.readFileSync(selectedPath, 'utf8'));
 const scenesById = new Map(job.scenes.map((s) => [s.id, s]));
@@ -150,7 +173,7 @@ const run = async () => {
         fs.copyFileSync(cached, file);
         reused++;
       } else {
-        await tts(spoken(s.narration, s.id), file);
+        await recordLine(spoken(s.narration, s.id), s.id, file);
         generated++;
       }
       s.audio = `jobs/${job.id}/${s.id}.mp3`;
@@ -169,7 +192,7 @@ const run = async () => {
     for (const id of ids) {
       const s = scenesById.get(id);
       if (!s) continue;
-      await tts(spoken(s.narration, id), path.join(outDir, `${id}.take${take}.mp3`));
+      await recordLine(spoken(s.narration, id), id, path.join(outDir, `${id}.take${take}.mp3`));
       console.log(`Retake ${take} of ${id}`);
     }
     return;
