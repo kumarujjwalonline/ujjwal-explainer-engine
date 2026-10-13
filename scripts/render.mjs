@@ -26,6 +26,9 @@ const video = async (name, inputProps, scale = 1) => {
     inputProps,
     outputLocation,
     audioCodec: 'aac',
+    // 3D scenes (body walkthrough, molecules) need WebGL; GitHub runners have no GPU,
+    // so Chrome renders it in software (SwiftShader via ANGLE).
+    chromiumOptions: {gl: 'swangle'},
     onProgress: ({progress}) => {
       const p = Math.floor(progress * 10);
       if (p !== last) {
@@ -43,6 +46,6 @@ if (what === 'all' || what === 'shorts' || what === 'preview')
   for (const s of job.shorts || []) await video(`${job.id}-${s.id}`, {job, format: '9:16', sceneIds: s.scenes, hook: s.hook}, what === 'preview' ? 0.5 : 1);
 if (what === 'all' || what === 'thumb' || what === 'preview') {
   const composition = await selectComposition({serveUrl, id: 'Thumbnail', inputProps: {job}});
-  await renderStill({composition, serveUrl, output: `out/${job.id}-thumbnail.png`, inputProps: {job}});
+  await renderStill({composition, serveUrl, output: `out/${job.id}-thumbnail.png`, inputProps: {job}, chromiumOptions: {gl: 'swangle'}});
   console.log('Rendered thumbnail');
 }

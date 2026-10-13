@@ -12,6 +12,10 @@ import {News} from './News';
 import {ImageReveal} from './ImageReveal';
 import {Hub} from './Hub';
 import {MapScene} from '../geo/MapScene';
+import {SourceCard} from './SourceCard';
+import {Footage} from './Footage';
+import {Body3D} from '../three/Body3D';
+import {Molecule3D} from '../three/Molecule3D';
 
 export const SceneVisual: React.FC<{scene: Scene; format: Format}> = ({scene}) => {
   const v = scene.visual;
@@ -40,6 +44,14 @@ export const SceneVisual: React.FC<{scene: Scene; format: Format}> = ({scene}) =
       return <Hub {...v} />;
     case 'map':
       return <MapScene spec={v.map} />;
+    case 'body':
+      return <Body3D {...v} />;
+    case 'molecule':
+      return <Molecule3D {...v} />;
+    case 'source':
+      return <SourceCard {...v} />;
+    case 'footage':
+      return <Footage {...v} />;
     default:
       return null;
   }

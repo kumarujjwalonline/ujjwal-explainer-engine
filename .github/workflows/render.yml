@@ -104,6 +104,23 @@ jobs:
           path: .voice-cache
           key: voice-${{ inputs.job_id }}-${{ github.run_id }}
 
+      - name: Source screenshots
+        if: inputs.mode != 'sample'
+        continue-on-error: true
+        run: |
+          if python3 -c "import json,sys; j=json.load(open('out/job.final.json')); sys.exit(0 if any((s.get('visual') or {}).get('type')=='source' for s in j['scenes']) else 1)"; then
+            pip install --quiet playwright pillow
+            python3 -m playwright install --with-deps chromium > /dev/null
+            python3 scripts/fetch_sources.py out/job.final.json
+          fi
+
+      - name: Stock footage (Pexels)
+        if: inputs.mode != 'sample'
+        continue-on-error: true
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        run: python3 scripts/fetch_footage.py out/job.final.json
+
       - name: Render
         if: inputs.mode != 'sample'
         run: node scripts/render.mjs out/job.final.json ${{ inputs.mode == 'preview' && 'preview' || 'all' }}
@@ -125,7 +142,7 @@ jobs:
         run: |
           cd out
           shopt -s nullglob
-          files=(*.mp4 *.mp3 *.png *.jpg job.final*.json audio-qc*.json sync*.json)
+          files=(*.mp4 *.mp3 *.png *.jpg job.final*.json audio-qc*.json sync*.json sources-report*.json)
           ls -la
           gh release create "$TAG" --title "$JOB_ID ($MODE)" --notes "Rendered by $RUN_URL" --prerelease "${files[@]}"
           node ../scripts/result.mjs "https://github.com/${{ github.repository }}/releases/download/$TAG"

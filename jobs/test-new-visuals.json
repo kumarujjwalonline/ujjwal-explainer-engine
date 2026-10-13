@@ -1,0 +1,163 @@
+{
+ "id": "test-new-visuals",
+ "title": "New visuals test",
+ "format": "16:9",
+ "tracker": {
+  "title": "Lesson progress",
+  "objectives": [
+   {
+    "id": "o1",
+    "label": "3D body",
+    "children": [
+     {
+      "id": "o1a",
+      "label": "Walkthrough"
+     }
+    ]
+   },
+   {
+    "id": "o2",
+    "label": "Science",
+    "children": [
+     {
+      "id": "o2a",
+      "label": "Molecules"
+     }
+    ]
+   },
+   {
+    "id": "o3",
+    "label": "Proof",
+    "children": [
+     {
+      "id": "o3a",
+      "label": "Sources"
+     }
+    ]
+   }
+  ]
+ },
+ "scenes": [
+  {
+   "id": "S01",
+   "narration": "[explaining] test",
+   "durationSec": 12,
+   "objective": "o1a",
+   "completes": [],
+   "visual": {
+    "type": "body",
+    "steps": [
+     {
+      "organ": "fat",
+      "label": "Fat cell releases triglyceride"
+     },
+     {
+      "organ": "blood",
+      "label": "Blood carries it to the muscles"
+     },
+     {
+      "organ": "muscle",
+      "label": "Muscles burn it for energy"
+     },
+     {
+      "organ": "lungs",
+      "label": "CO2 is breathed out"
+     }
+    ],
+    "flow": {
+     "path": [
+      "fat",
+      "blood",
+      "lungs",
+      "nose"
+     ],
+     "particle": "CO2",
+     "label": "CO2 leaves through your breath"
+    }
+   }
+  },
+  {
+   "id": "S02",
+   "narration": "[explaining] test",
+   "durationSec": 7,
+   "objective": "o1a",
+   "completes": [
+    "o1a"
+   ],
+   "visual": {
+    "type": "body",
+    "focus": "liver",
+    "caption": "The liver"
+   }
+  },
+  {
+   "id": "S03",
+   "narration": "[measured] test",
+   "durationSec": 10,
+   "objective": "o2a",
+   "completes": [],
+   "visual": {
+    "type": "molecule",
+    "reaction": {
+     "from": [
+      "triglyceride",
+      "O2"
+     ],
+     "to": [
+      "CO2",
+      "H2O"
+     ],
+     "label": "C55H104O6 + 78 O2 \u2192 55 CO2 + 52 H2O"
+    }
+   }
+  },
+  {
+   "id": "S04",
+   "narration": "[explaining] test",
+   "durationSec": 6,
+   "objective": "o2a",
+   "completes": [
+    "o2a"
+   ],
+   "visual": {
+    "type": "molecule",
+    "molecules": [
+     "CO2",
+     "H2O",
+     "O2"
+    ]
+   }
+  },
+  {
+   "id": "S05",
+   "narration": "[measured] test",
+   "durationSec": 9,
+   "objective": "o3a",
+   "completes": [],
+   "visual": {
+    "type": "source",
+    "url": "https://www.bmj.com/content/349/bmj.g7257",
+    "publisher": "The BMJ",
+    "authors": "Ruben Meerman & Andrew Brown",
+    "date": "16 Dec 2014",
+    "title": "When somebody loses weight, where does the fat go?",
+    "why": "To show where the mass of lost fat physically goes"
+   }
+  },
+  {
+   "id": "S06",
+   "narration": "[explaining] test",
+   "durationSec": 6,
+   "objective": "o3a",
+   "completes": [
+    "o3a"
+   ],
+   "visual": {
+    "type": "footage",
+    "query": "man jogging in park morning",
+    "caption": "Every breath carries a little fat away"
+   }
+  }
+ ],
+ "shorts": []
+}

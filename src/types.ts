@@ -1,6 +1,11 @@
 // Job schema: what n8n's AI writes for each video. Kept as plain data so a
 // script can never break the build. See README.md for field-by-field docs.
 
+import type {BodySpec} from './three/Body3D';
+import type {MoleculeSpec} from './three/Molecule3D';
+import type {SourceSpec} from './visuals/SourceCard';
+import type {FootageSpec} from './visuals/Footage';
+
 export type Format = '16:9' | '9:16';
 export type LonLat = [number, number];
 
@@ -20,7 +25,11 @@ export type Visual =
   | {type: 'news'; headline: string; outlet: string; date: string}
   | {type: 'image'; src: string; credit?: string; caption?: string}
   | {type: 'map'; map: MapSpec}
-  | {type: 'hub'; center: {label: string; icon?: IconName}; spokes: {label: string; icon?: IconName}[]};
+  | {type: 'hub'; center: {label: string; icon?: IconName}; spokes: {label: string; icon?: IconName}[]}
+  | ({type: 'body'} & BodySpec)
+  | ({type: 'molecule'} & MoleculeSpec)
+  | ({type: 'source'} & SourceSpec)
+  | ({type: 'footage'} & FootageSpec);
 
 export type IconName =
   | 'ship' | 'truck' | 'train' | 'plane' | 'person' | 'people' | 'robot' | 'code' | 'chat'
