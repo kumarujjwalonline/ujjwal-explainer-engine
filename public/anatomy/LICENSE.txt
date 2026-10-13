@@ -1,0 +1,3 @@
+Anatomy models derived from BodyParts3D, (c) The Database Center for Life Science (DBCLS),
+licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).
+Changes: merged into organ groups, simplified, rescaled to metres, re-oriented.
