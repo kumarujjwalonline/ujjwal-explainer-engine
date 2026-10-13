@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import {interpolate, useCurrentFrame, useVideoConfig, Easing} from 'remotion';
 import {colors, fonts} from '../theme';
 import {Region, useBox, useUnit} from '../components/Box';
+import {THREE_DPR} from './Body3D';
 
 // Production rule 17: 3D motion graphics for science. Ball-and-stick molecules from a
 // built-in library (so the AI never has to invent coordinates), slowly turning; a reaction
@@ -85,7 +86,7 @@ const Bond: React.FC<{a: THREE.Vector3; b: THREE.Vector3; order: number; opacity
     <group position={mid} quaternion={q}>
       {offs.map((o) => (
         <mesh key={o} position={[o, 0, 0]}>
-          <cylinderGeometry args={[0.06, 0.06, len, 12]} />
+          <cylinderGeometry args={[0.06, 0.06, len, 8]} />
           <meshStandardMaterial color="#C9D3E0" transparent opacity={opacity} />
         </mesh>
       ))}
@@ -105,7 +106,7 @@ const MolMesh: React.FC<{m: Mol; at: THREE.Vector3; spin: number; scale: number;
       {burst < 0.35 ? m.bonds.map(([i, j, o], k) => <Bond key={k} a={pos[i]} b={pos[j]} order={o || 1} opacity={opacity * (1 - burst / 0.35)} />) : null}
       {m.atoms.map((a, i) => (
         <mesh key={i} position={pos[i]}>
-          <sphereGeometry args={[(EL[a.e] || EL.C).r, 24, 18]} />
+          <sphereGeometry args={[(EL[a.e] || EL.C).r, 16, 12]} />
           <meshStandardMaterial color={(EL[a.e] || EL.C).c} roughness={0.35} metalness={0.05} transparent opacity={opacity} emissive={(EL[a.e] || EL.C).c} emissiveIntensity={0.08 + burst * 0.6} />
         </mesh>
       ))}
@@ -151,13 +152,13 @@ export const Molecule3D: React.FC<MoleculeSpec> = ({molecules = ['CO2'], reactio
   const t1 = D * 0.32, t2 = D * 0.55;
   const burst = reaction ? interpolate(f, [t1, t2], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.cubic)}) : 0;
   const build = reaction ? interpolate(f, [t2, t2 + D * 0.2], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)}) : 0;
-  const L = layout(left, reaction ? -4.2 : 0, reaction ? 7.5 : 14);
-  const R = layout(right, 4.2, 7.5);
+  const L = layout(left, reaction ? -3.9 : 0, reaction ? 6 : 12);
+  const R = layout(right, 3.9, 6);
   const label = (txt: string, o: number) => <div style={{fontFamily: fonts.display, fontWeight: 700, fontSize: 26 * u, color: colors.sub, opacity: o}}>{txt}</div>;
   return (
     <Region>
-      <ThreeCanvas width={b.w} height={b.h} style={{position: 'absolute', inset: 0}} gl={{antialias: true, preserveDrawingBuffer: true}}>
-        <Cam z={reaction ? 15 : 11} aspect={b.w / b.h} />
+      <ThreeCanvas width={b.w} height={b.h} dpr={THREE_DPR} style={{position: 'absolute', inset: 0}} gl={{antialias: true, preserveDrawingBuffer: true}}>
+        <Cam z={reaction ? 17 : 12} aspect={b.w / b.h} />
         <ambientLight intensity={0.6} />
         <directionalLight position={[3, 4, 6]} intensity={1.2} />
         <pointLight position={[-4, -2, 5]} intensity={0.6} color="#8EC5FF" />

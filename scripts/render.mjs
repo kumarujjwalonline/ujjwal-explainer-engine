@@ -4,6 +4,7 @@
 //   preview renders the long video at half resolution for a fast layout check.
 import fs from 'node:fs';
 import path from 'node:path';
+import os from 'node:os';
 import {bundle} from '@remotion/bundler';
 import {renderMedia, renderStill, selectComposition} from '@remotion/renderer';
 
@@ -29,6 +30,7 @@ const video = async (name, inputProps, scale = 1) => {
     // 3D scenes (body walkthrough, molecules) need WebGL; GitHub runners have no GPU,
     // so Chrome renders it in software (SwiftShader via ANGLE).
     chromiumOptions: {gl: 'swangle'},
+    concurrency: Math.max(2, os.cpus().length),
     onProgress: ({progress}) => {
       const p = Math.floor(progress * 10);
       if (p !== last) {

@@ -7,7 +7,7 @@ import {Region, useBox, useEnter, useFade, useUnit} from '../components/Box';
 // when and why. The screenshot is taken from the live page on GitHub (scripts/fetch_sources.py).
 // If the page could not be captured, the card shows the details without a picture: a source is
 // never recreated or faked.
-export type SourceSpec = {url: string; publisher: string; authors?: string; date?: string; title?: string; why?: string; shot?: string; shotRatio?: number};
+export type SourceSpec = {url: string; publisher: string; authors?: string; date?: string; title?: string; why?: string; shot?: string; shotRatio?: number; capturedUrl?: string};
 
 const domain = (u: string) => {
   try {
@@ -17,7 +17,7 @@ const domain = (u: string) => {
   }
 };
 
-export const SourceCard: React.FC<SourceSpec> = ({url, publisher, authors, date, title, why, shot, shotRatio}) => {
+export const SourceCard: React.FC<SourceSpec> = ({url, publisher, authors, date, title, why, shot, shotRatio, capturedUrl}) => {
   const u = useUnit();
   const b = useBox();
   const f = useCurrentFrame();
@@ -42,7 +42,7 @@ export const SourceCard: React.FC<SourceSpec> = ({url, publisher, authors, date,
       <div style={{width: `${frameW * 100}%`, height: '86%', borderRadius: 16 * u, overflow: 'hidden', border: `2px solid ${colors.border}`, background: '#FFFFFF', boxShadow: '0 20px 60px rgba(0,0,0,0.45)', transform: `translateY(${(1 - e) * 50}px) scale(${0.95 + 0.05 * e})`, opacity: e, display: 'flex', flexDirection: 'column'}}>
         <div style={{height: 46 * u, flex: 'none', background: '#E9EDF2', display: 'flex', alignItems: 'center', gap: 10 * u, padding: `0 ${16 * u}px`}}>
           {['#FF5F57', '#FEBC2E', '#28C840'].map((c) => <span key={c} style={{width: 12 * u, height: 12 * u, borderRadius: 6 * u, background: c}} />)}
-          <div style={{flex: 1, marginLeft: 12 * u, height: 28 * u, borderRadius: 14 * u, background: '#FFFFFF', color: '#3A4A5E', fontSize: 17 * u, display: 'flex', alignItems: 'center', padding: `0 ${14 * u}px`, overflow: 'hidden', whiteSpace: 'nowrap'}}>🔒 {domain(url)}</div>
+          <div style={{flex: 1, marginLeft: 12 * u, height: 28 * u, borderRadius: 14 * u, background: '#FFFFFF', color: '#3A4A5E', fontSize: 17 * u, display: 'flex', alignItems: 'center', padding: `0 ${14 * u}px`, overflow: 'hidden', whiteSpace: 'nowrap'}}>🔒 {domain(capturedUrl || url)}</div>
         </div>
         <div style={{flex: 1, position: 'relative', overflow: 'hidden', background: shot ? '#FFFFFF' : colors.panel}}>
           {shot ? (

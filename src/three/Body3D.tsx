@@ -23,6 +23,8 @@ export type BodySpec = {
 };
 
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
+// Internal 3D resolution: GitHub has no GPU, so WebGL runs in software and cost grows with pixels.
+export const THREE_DPR = 0.6;
 // Viewer faces the body: the person's right side is at negative x.
 const POS: Record<Organ, THREE.Vector3> = {
   brain: V(0, 1.53, 0),
@@ -45,7 +47,7 @@ const PARTICLE: Record<string, string> = {CO2: '#D9E2EC', O2: '#5BC0FF', fat: '#
 
 const Ellipsoid: React.FC<{p: THREE.Vector3; r: [number, number, number]; color: string; glow: number; dim: boolean}> = ({p, r, color, glow, dim}) => (
   <mesh position={p} scale={r}>
-    <sphereGeometry args={[1, 32, 24]} />
+    <sphereGeometry args={[1, 22, 16]} />
     <meshStandardMaterial color={color} emissive={glow > 0 ? colors.orange : color} emissiveIntensity={glow > 0 ? 0.6 + glow : 0.12} transparent opacity={dim ? 0.28 : 0.92} roughness={0.45} />
   </mesh>
 );
@@ -67,7 +69,7 @@ const Organs: React.FC<{active?: Organ; pulse: number}> = ({active, pulse}) => {
       <Ellipsoid p={POS.stomach} r={[0.09, 0.07, 0.06]} color="#E39B7B" glow={g('stomach')} dim={d('stomach')} />
       <Ellipsoid p={POS.pancreas} r={[0.09, 0.025, 0.03]} color="#E8C27A" glow={g('pancreas')} dim={d('pancreas')} />
       <mesh position={POS.intestines}>
-        <torusKnotGeometry args={[0.1, 0.03, 96, 10, 2, 5]} />
+        <torusKnotGeometry args={[0.1, 0.03, 64, 8, 2, 5]} />
         <meshStandardMaterial color="#E7A6A1" emissive={g('intestines') ? colors.orange : '#E7A6A1'} emissiveIntensity={g('intestines') ? 0.6 + g('intestines') : 0.1} transparent opacity={d('intestines') ? 0.28 : 0.9} />
       </mesh>
       <Ellipsoid p={V(-0.1, 0.26, -0.08)} r={[0.04, 0.07, 0.035]} color="#9C2F3F" glow={g('kidneys')} dim={d('kidneys')} />
@@ -75,14 +77,14 @@ const Organs: React.FC<{active?: Organ; pulse: number}> = ({active, pulse}) => {
       <Ellipsoid p={POS.bladder} r={[0.05, 0.045, 0.045]} color="#F2D16B" glow={g('bladder')} dim={d('bladder')} />
       {/* Belly fat: a soft yellow layer with visible fat cells */}
       <mesh position={V(0, 0.17, 0.04)} scale={[0.27, 0.2, 0.19]}>
-        <sphereGeometry args={[1, 32, 24]} />
+        <sphereGeometry args={[1, 22, 16]} />
         <meshStandardMaterial color="#F2C94C" emissive={g('fat') ? colors.orange : '#F2C94C'} emissiveIntensity={g('fat') ? 0.4 + g('fat') : 0.08} transparent opacity={d('fat') ? 0.08 : 0.22} depthWrite={false} />
       </mesh>
       {Array.from({length: 14}, (_, i) => {
         const a = (i / 14) * Math.PI * 2;
         return (
           <mesh key={i} position={V(Math.cos(a) * 0.12, 0.17 + Math.sin(a * 2) * 0.07, 0.19 + (i % 3) * 0.01)}>
-            <sphereGeometry args={[0.028, 14, 10]} />
+            <sphereGeometry args={[0.028, 10, 8]} />
             <meshStandardMaterial color="#F7D774" emissive="#F2C94C" emissiveIntensity={g('fat') ? 0.5 + g('fat') : 0.15} transparent opacity={d('fat') ? 0.25 : 0.95} />
           </mesh>
         );
@@ -98,12 +100,10 @@ const Organs: React.FC<{active?: Organ; pulse: number}> = ({active, pulse}) => {
 };
 
 const Shell: React.FC = () => {
-  const fill = {color: '#5B9BD5', transparent: true, opacity: 0.1, depthWrite: false, roughness: 0.3} as const;
-  const rim = {color: '#8EC5FF', transparent: true, opacity: 0.18, side: THREE.BackSide, depthWrite: false} as const;
+  const fill = {color: '#6FA8DC', emissive: '#2A4F7A', emissiveIntensity: 0.4, transparent: true, opacity: 0.16, depthWrite: false, roughness: 0.3} as const;
   const part = (key: string, pos: THREE.Vector3, geo: React.ReactNode, scale: [number, number, number] = [1, 1, 1], rot: [number, number, number] = [0, 0, 0]) => (
     <group key={key} position={pos} scale={scale} rotation={rot}>
       <mesh>{geo}<meshStandardMaterial {...fill} /></mesh>
-      <mesh scale={1.03}>{geo}<meshBasicMaterial {...rim} /></mesh>
     </group>
   );
   return (
@@ -142,7 +142,7 @@ const routePoints = (path: Organ[]) => {
 
 const Flow: React.FC<{path: Organ[]; color: string; t: number; show: number}> = ({path, color, t, show}) => {
   const curve = useMemo(() => new THREE.CatmullRomCurve3(routePoints(path), false, 'catmullrom', 0.3), [path.join(',')]);
-  const tube = useMemo(() => new THREE.TubeGeometry(curve, 160, 0.012, 8, false), [curve]);
+  const tube = useMemo(() => new THREE.TubeGeometry(curve, 100, 0.012, 6, false), [curve]);
   const N = 22;
   return (
     <group>
@@ -156,7 +156,7 @@ const Flow: React.FC<{path: Organ[]; color: string; t: number; show: number}> = 
         const fadeOut = path[path.length - 1] === 'nose' ? interpolate(u, [0.82, 1], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 1;
         return (
           <mesh key={i} position={p}>
-            <sphereGeometry args={[0.022, 12, 10]} />
+            <sphereGeometry args={[0.022, 8, 6]} />
             <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1.4} transparent opacity={fadeOut} />
           </mesh>
         );
@@ -184,15 +184,16 @@ export const Body3D: React.FC<BodySpec> = ({focus, steps = [], flow, caption}) =
   const portrait = b.w < b.h;
   const n = steps.length;
   // Steps share the first 85 % of the scene; the camera eases from one organ to the next.
-  const span = (durationInFrames * 0.85) / Math.max(1, n);
-  const idx = n ? Math.min(n - 1, Math.floor(f / span)) : -1;
-  const active: Organ | undefined = n ? steps[idx].organ : focus;
+  const intro0 = Math.round(durationInFrames * 0.18); // establishing shot of the whole body
+  const span = (durationInFrames * 0.85 - intro0) / Math.max(1, n);
+  const idx = n ? (f < intro0 ? 0 : Math.min(n - 1, Math.floor((f - intro0) / span))) : -1;
+  const active: Organ | undefined = n ? (f < intro0 ? undefined : steps[idx].organ) : focus;
   const whole = {t: V(0, 0.15, 0), d: 6.2};
-  const shot = (o?: Organ) => (o ? {t: POS[o], d: o === 'muscle' || o === 'bones' ? 2.4 : 1.7} : whole);
+  const shot = (o?: Organ) => (o ? {t: POS[o], d: o === 'muscle' || o === 'bones' ? 3.2 : 2.5} : whole);
   const intro = interpolate(f, [0, Math.min(40, durationInFrames * 0.25)], [0, 1], {extrapolateRight: 'clamp', easing: Easing.inOut(Easing.cubic)});
   const prev = idx > 0 ? shot(steps[idx - 1].organ) : whole;
   const cur = shot(active);
-  const k = n ? interpolate(f - idx * span, [0, Math.min(24, span * 0.6)], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.cubic)}) : intro;
+  const k = n ? interpolate(f - intro0 - idx * span, [0, Math.min(24, span * 0.6)], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.inOut(Easing.cubic)}) : intro;
   const from = idx === 0 || !n ? whole : prev;
   const target = from.t.clone().lerp(cur.t, k);
   const dist = from.d + (cur.d - from.d) * k;
@@ -202,7 +203,7 @@ export const Body3D: React.FC<BodySpec> = ({focus, steps = [], flow, caption}) =
   const panelW = portrait ? b.w : b.w * 0.34;
   return (
     <Region>
-      <ThreeCanvas width={b.w} height={b.h} style={{position: 'absolute', inset: 0}} gl={{antialias: true, preserveDrawingBuffer: true}}>
+      <ThreeCanvas width={b.w} height={b.h} dpr={THREE_DPR} style={{position: 'absolute', inset: 0}} gl={{antialias: true, preserveDrawingBuffer: true}}>
         <Camera target={portrait ? target : target.clone().add(V(-0.22 * dist / 1.7, 0, 0))} dist={dist} orbit={orbit} aspect={b.w / b.h} />
         <ambientLight intensity={0.55} />
         <directionalLight position={[2, 3, 4]} intensity={1.1} />
@@ -216,7 +217,7 @@ export const Body3D: React.FC<BodySpec> = ({focus, steps = [], flow, caption}) =
       {n ? (
         <div style={portrait ? {position: 'absolute', left: 0, right: 0, bottom: 0, padding: 28 * u, background: 'linear-gradient(to top, rgba(11,23,38,0.95), rgba(11,23,38,0))'} : {position: 'absolute', left: 0, top: 0, bottom: 0, width: panelW, padding: `${40 * u}px ${30 * u}px`, boxSizing: 'border-box', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 18 * u, background: 'linear-gradient(to right, rgba(11,23,38,0.92), rgba(11,23,38,0))'}}>
           {steps.map((s, i) => {
-            const state = i < idx ? 'done' : i === idx ? 'now' : 'next';
+            const state = f < intro0 ? 'next' : i < idx ? 'done' : i === idx ? 'now' : 'next';
             const c = state === 'now' ? colors.orange : state === 'done' ? colors.green : colors.muted;
             if (portrait && i !== idx) return null;
             return (
