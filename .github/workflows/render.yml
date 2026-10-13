@@ -27,9 +27,11 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  render:
+  prepare:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 120
+    outputs:
+      shards: ${{ steps.plan.outputs.shards }}
     env:
       JOB: jobs/${{ inputs.job_id }}.json
       TAG: render-${{ inputs.job_id }}-${{ github.run_number }}
@@ -121,9 +123,169 @@ jobs:
           PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
         run: python3 scripts/fetch_footage.py out/job.final.json
 
-      - name: Render
+      - name: Reuse scenes from earlier renders of this job
         if: inputs.mode != 'sample'
-        run: node scripts/render.mjs out/job.final.json ${{ inputs.mode == 'preview' && 'preview' || 'all' }}
+        uses: actions/cache/restore@v4
+        with:
+          path: .chunk-cache
+          key: chunks-${{ inputs.job_id }}-${{ github.run_id }}
+          restore-keys: chunks-${{ inputs.job_id }}-
+
+      - name: Plan the render
+        id: plan
+        if: inputs.mode != 'sample'
+        run: |
+          shards=$(node scripts/render.mjs out/job.final.json plan ${{ inputs.mode }} 8 2> >(tee out/plan.log >&2))
+          echo "shards=$shards" >> "$GITHUB_OUTPUT"
+          echo "::notice title=Render plan::$(cat out/plan.log | tail -1)"
+
+      - name: Hand files to the render machines
+        if: inputs.mode != 'sample'
+        uses: actions/upload-artifact@v4
+        with:
+          name: work-${{ github.run_id }}
+          include-hidden-files: true
+          retention-days: 2
+          path: |
+            out/
+            public/jobs/${{ inputs.job_id }}/
+            public/sfx/
+
+      - name: Publish files
+        if: inputs.mode == 'sample'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOB_ID: ${{ inputs.job_id }}
+          MODE: ${{ inputs.mode }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          cd out
+          shopt -s nullglob
+          files=(*.mp4 *.mp3 *.png *.jpg job.final*.json audio-qc*.json sync*.json sources-report*.json footage-report*.json)
+          ls -la
+          gh release create "$TAG" --title "$JOB_ID ($MODE)" --notes "Rendered by $RUN_URL" --prerelease "${files[@]}"
+          node ../scripts/result.mjs "https://github.com/${{ github.repository }}/releases/download/$TAG"
+
+      - name: Tell n8n
+        if: success() && inputs.callback_url != '' && inputs.mode == 'sample'
+        run: |
+          curl -sS -X POST -H 'Content-Type: application/json' --data @out/result.json "${{ inputs.callback_url }}"
+
+      - name: Keep logs of a failed run
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd out 2>/dev/null || exit 0
+          shopt -s nullglob
+          logs=(*.log audio-qc*.json)
+          [ ${#logs[@]} -gt 0 ] && gh release create "debug-${{ inputs.job_id }}-${{ github.run_number }}" --title "debug ${{ inputs.job_id }}" --notes "Logs of a failed run" --prerelease "${logs[@]}" || true
+
+      - name: Tell n8n about a failure
+        if: failure() && inputs.callback_url != ''
+        run: |
+          curl -sS -X POST -H 'Content-Type: application/json' \
+            --data "{\"job_id\":\"${{ inputs.job_id }}\",\"mode\":\"${{ inputs.mode }}\",\"status\":\"failed\",\"run\":\"${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            "${{ inputs.callback_url }}"
+
+  render:
+    needs: prepare
+    if: inputs.mode != 'sample' && needs.prepare.outputs.shards != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: true
+      matrix:
+        shard: ${{ fromJson(needs.prepare.outputs.shards) }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-core > /dev/null
+          npm install --no-audit --no-fund
+          npx remotion browser ensure
+
+      - name: Get prepared files
+        uses: actions/download-artifact@v4
+        with:
+          name: work-${{ github.run_id }}
+
+      - name: Render my share of the scenes
+        run: node scripts/render.mjs out/job.final.json shard ${{ matrix.shard }}
+
+      - name: Send rendered scenes back
+        uses: actions/upload-artifact@v4
+        with:
+          name: chunks-${{ github.run_id }}-${{ matrix.shard }}
+          path: new-chunks/
+          retention-days: 2
+          if-no-files-found: ignore
+
+  finish:
+    needs: [prepare, render]
+    if: always() && needs.prepare.result == 'success' && inputs.mode != 'sample'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      TAG: render-${{ inputs.job_id }}-${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package.json
+
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg fonts-noto-core > /dev/null
+          npm install --no-audit --no-fund
+          npx remotion browser ensure
+
+      - name: Get prepared files
+        uses: actions/download-artifact@v4
+        with:
+          name: work-${{ github.run_id }}
+
+      - name: Scenes reused from earlier renders
+        uses: actions/cache/restore@v4
+        with:
+          path: .chunk-cache
+          key: chunks-${{ inputs.job_id }}-${{ github.run_id }}
+          restore-keys: chunks-${{ inputs.job_id }}-
+
+      - name: Collect rendered scenes
+        if: needs.render.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: chunks-${{ github.run_id }}-*
+          path: .chunk-cache
+          merge-multiple: true
+
+      - name: Stop if a render machine failed
+        if: needs.render.result == 'failure' || needs.render.result == 'cancelled'
+        run: |
+          echo "::error title=Render failed::One of the render machines failed"
+          exit 1
+
+      - name: Join scenes, add sound, thumbnail
+        run: node scripts/render.mjs out/job.final.json assemble
+
+      - name: Keep scenes for the next edit of this job
+        uses: actions/cache/save@v4
+        with:
+          path: .chunk-cache
+          key: chunks-${{ inputs.job_id }}-${{ github.run_id }}
 
       - name: Sync check sheets
         if: inputs.mode != 'sample'

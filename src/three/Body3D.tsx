@@ -157,6 +157,8 @@ const Anatomy3D: React.FC<{a: Anatomy; active?: Organ; pulse: number}> = ({a, ac
       {GROUPS.map((g) => {
         const geo = a[g];
         if (!geo) return null;
+        // Faint full-body layers cost a lot to draw in software and add little when dim: draw them only when they are the subject.
+        if ((g === 'muscles' || g === 'veins') && !lit.has(g)) return null;
         const state = lit.has(g) ? 'focus' : active ? 'dim' : 'normal';
         return <Part key={g} geo={geo} group={g} state={state} pulse={pulse} />;
       })}
