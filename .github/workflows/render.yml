@@ -125,7 +125,7 @@ jobs:
         run: |
           cd out
           shopt -s nullglob
-          files=(*.mp4 *.mp3 *.png *.jpg job.final.json audio-qc.json sync.json)
+          files=(*.mp4 *.mp3 *.png *.jpg job.final*.json audio-qc*.json sync*.json)
           ls -la
           gh release create "$TAG" --title "$JOB_ID ($MODE)" --notes "Rendered by $RUN_URL" --prerelease "${files[@]}"
           node ../scripts/result.mjs "https://github.com/${{ github.repository }}/releases/download/$TAG"
