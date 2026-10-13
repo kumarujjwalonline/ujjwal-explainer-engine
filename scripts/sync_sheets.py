@@ -22,18 +22,39 @@ if os.path.exists("out/audio-qc.json"):
 
 FONT_DIR = "/usr/share/fonts/truetype/noto"
 def font(name, size):
-    for n in (name, "NotoSans-Regular.ttf"):
-        p = os.path.join(FONT_DIR, n)
-        if os.path.exists(p):
-            try:
-                return ImageFont.truetype(p, size, layout_engine=ImageFont.Layout.RAQM)
-            except Exception:
-                return ImageFont.truetype(p, size)
+    p = os.path.join(FONT_DIR, name)
+    if os.path.exists(p):
+        try:
+            return ImageFont.truetype(p, size, layout_engine=ImageFont.Layout.RAQM)
+        except Exception:
+            return ImageFont.truetype(p, size)
     return ImageFont.load_default()
 
-F_HEAD = font("NotoSans-Bold.ttf", 26)
-F_TEXT = font("NotoSansDevanagari-Regular.ttf", 21)
-F_CAP = font("NotoSansDevanagari-Regular.ttf", 19)
+# Hindi and English are drawn with separate fonts: Noto Sans has no Devanagari letters and
+# Noto Sans Devanagari has no Latin ones, so each run of text uses the font that covers it.
+SIZES = {"head": 26, "text": 21, "cap": 19}
+FONTS = {k: (font("NotoSans-Bold.ttf" if k == "head" else "NotoSans-Regular.ttf", v), font("NotoSansDevanagari-Bold.ttf" if k == "head" else "NotoSansDevanagari-Regular.ttf", v)) for k, v in SIZES.items()}
+import re as _re
+_RUN = _re.compile(r"([\u0900-\u097F\u200c\u200d]+(?:\s+[\u0900-\u097F\u200c\u200d]+)*)")
+
+def runs(text):
+    out = []
+    for i, part in enumerate(_RUN.split(text)):
+        if part:
+            out.append((part, i % 2 == 1))
+    return out
+
+def textlen(draw, text, kind):
+    lat, dev = FONTS[kind]
+    return sum(draw.textlength(t, font=dev if is_dev else lat) for t, is_dev in runs(text))
+
+def draw_text(draw, xy, text, kind, fill):
+    x, y = xy
+    lat, dev = FONTS[kind]
+    for t, is_dev in runs(text):
+        f = dev if is_dev else lat
+        draw.text((x, y), t, font=f, fill=fill)
+        x += draw.textlength(t, font=f)
 
 def frames(s):
     return max(15, round((s.get("durationSec") or 4) * FPS))
@@ -51,11 +72,11 @@ def spoken_at(s, t, line):
     i = int(len(toks) * min(0.999, t / dur))
     return " ".join(toks[max(0, i - 2): i + 3])
 
-def wrap(draw, text, fnt, width):
+def wrap(draw, text, kind, width):
     out, cur = [], ""
     for w in text.split():
         nxt = (cur + " " + w).strip()
-        if draw.textlength(nxt, font=fnt) > width and cur:
+        if textlen(draw, nxt, kind) > width and cur:
             out.append(cur); cur = w
         else:
             cur = nxt
@@ -86,18 +107,18 @@ for k in range(0, len(rows), 4):
     d = ImageDraw.Draw(img)
     y = 16
     for r in chunk:
-        d.text((16, y), f"{r['id']}  {r['start']:.1f}–{r['end']:.1f}s  visual: {r['visual']}" + (f"  on-screen: {r['onScreen']}" if r['onScreen'] else ""), font=F_HEAD, fill=(20, 20, 20))
+        draw_text(d, (16, y), f"{r['id']}  {r['start']:.1f}–{r['end']:.1f}s  visual: {r['visual']}" + (f"  on-screen: {r['onScreen']}" if r['onScreen'] else ""), "head", (20, 20, 20))
         ly = y + 36
-        for ln in wrap(d, "Narration: " + r["narration"], F_TEXT, W - 32)[:2]:
-            d.text((16, ly), ln, font=F_TEXT, fill=(60, 60, 60)); ly += 28
+        for ln in wrap(d, "Narration: " + r["narration"], "text", W - 32)[:2]:
+            draw_text(d, (16, ly), ln, "text", (60, 60, 60)); ly += 28
         fy = y + 100
         for j, (t, path, words) in enumerate(r["shots"]):
             x = 16 + j * (FW + 16)
             img.paste(Image.open(path), (x, fy))
             d.rectangle([x, fy + FH, x + FW, fy + FH + 44], fill=(255, 236, 200))
-            cap = wrap(d, f"{t:.1f}s spoken: {words}", F_CAP, FW - 12)[:2]
+            cap = wrap(d, f"{t:.1f}s spoken: {words}", "cap", FW - 12)[:2]
             for i2, c in enumerate(cap):
-                d.text((x + 6, fy + FH + 2 + i2 * 21), c, font=F_CAP, fill=(30, 30, 30))
+                draw_text(d, (x + 6, fy + FH + 2 + i2 * 21), c, "cap", (30, 30, 30))
         y += ROW_H
     name = f"sync-{len(sheets) + 1:02d}.jpg"
     img.save(os.path.join("out", name), quality=82)
