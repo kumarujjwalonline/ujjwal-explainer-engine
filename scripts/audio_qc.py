@@ -266,6 +266,15 @@ def analyse(files):
 
 
 def voice():
+    """Give the cloned voice more body (Ujjwal: "previous voice was thinner but style was good").
+
+    The ElevenLabs settings that shape the style are left alone. After recording:
+      - pitch: lowered slightly when the median is above TARGET_F0 (at most 6 %, tempo kept)
+      - warmth: +3 dB low shelf around 120 Hz and +1.5 dB body around 250 Hz, more if the
+        measured low end is thin
+      - density: gentle 2:1 compression and a limiter, so the voice sounds fuller and steadier
+    Applied the same way to every line, so all clips match.
+    """
     job = load("out/job.final.json")
     sel = load("out/selected.json", {"ids": []})
     qc = load(QC_PATH, {"lines": {}})
@@ -277,27 +286,34 @@ def voice():
     if f0 > TARGET_F0:
         factor = max(MAX_SHIFT, TARGET_F0 / f0)
     bass_min = float(os.environ.get("QC_BASS_MIN", "0.18"))
-    bass_gain = 3.0 if bass < bass_min else (1.5 if factor < 1 else 0.0)
+    low_gain = 4.5 if bass < bass_min else 3.0
+    body = float(os.environ.get("QC_BODY", "1"))  # 0 turns the treatment off
     filters = []
     if factor < 0.999:
         filters += [f"asetrate=44100*{factor:.4f}", "aresample=44100", f"atempo={1 / factor:.4f}"]
-    if bass_gain:
-        filters.append(f"bass=g={bass_gain}:f=110:w=0.7")
+    if body > 0:
+        filters += [
+            f"bass=g={low_gain * body:.1f}:f=120:w=0.7",
+            f"equalizer=f=250:t=q:w=1.2:g={1.5 * body:.1f}",
+            f"equalizer=f=4200:t=q:w=1.5:g={-1.0 * body:.1f}",
+            "acompressor=threshold=0.125:ratio=2:attack=15:release=180:makeup=1.6",
+            "alimiter=limit=0.95",
+        ]
     if filters:
         for p in files:
             tmp = p + ".tmp.mp3"
-            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", p, "-af", ",".join(filters), "-c:a", "libmp3lame", "-b:a", "128k", "-ar", "44100", tmp], check=True)
+            subprocess.run(["ffmpeg", "-y", "-v", "error", "-i", p, "-af", ",".join(filters), "-c:a", "libmp3lame", "-b:a", "160k", "-ar", "44100", tmp], check=True)
             os.replace(tmp, p)
     after_f0, after_bass = analyse(files) if filters else (f0, bass)
     qc["voice"] = {
         "median_pitch_hz": round(f0, 1),
         "bass_share": round(bass, 3),
         "pitch_factor": round(factor, 3),
-        "bass_boost_db": bass_gain,
+        "low_boost_db": round(low_gain * body, 1),
         "after_pitch_hz": round(after_f0, 1),
         "after_bass_share": round(after_bass, 3),
         "target_pitch_hz": TARGET_F0,
-        "verdict": "deepened" if filters else "already medium-heavy, left unchanged",
+        "verdict": ("pitch lowered " + str(round((1 - factor) * 100, 1)) + "% and " if factor < 0.999 else "pitch kept, ") + ("fuller body added (warmth + compression)" if body > 0 else "no body treatment"),
     }
     save(QC_PATH, qc)
     print(json.dumps(qc["voice"], indent=2))
