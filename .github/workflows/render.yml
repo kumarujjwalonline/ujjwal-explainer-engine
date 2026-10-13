@@ -48,6 +48,17 @@ jobs:
           npm install --no-audit --no-fund
           npx remotion browser ensure
 
+      - name: Audio check tools (free speech recognition)
+        if: inputs.mode != 'preview'
+        run: pip install --quiet faster-whisper praat-parselmouth indic-transliteration numpy pillow
+
+      - name: Restore speech model
+        if: inputs.mode != 'preview'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-large-v3-turbo-v1
+
       - name: Type check
         continue-on-error: true
         run: npx tsc --noEmit
@@ -66,7 +77,7 @@ jobs:
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           ELEVEN_MODEL: ${{ vars.ELEVEN_MODEL || 'eleven_v3' }}
-        run: node scripts/voice.mjs "$JOB" ${{ inputs.mode == 'preview' && 'none' || inputs.mode }}
+        run: bash scripts/voice_qc.sh "$JOB" ${{ inputs.mode == 'preview' && 'none' || inputs.mode }}
 
       - name: Save voice clips for later runs
         if: always()
@@ -79,6 +90,13 @@ jobs:
         if: inputs.mode != 'sample'
         run: node scripts/render.mjs out/job.final.json ${{ inputs.mode == 'preview' && 'preview' || 'all' }}
 
+      - name: Sync check sheets
+        if: inputs.mode != 'sample'
+        run: |
+          pip install --quiet pillow
+          VIDEO=$(ls out/*-long.mp4 out/*-preview.mp4 2>/dev/null | head -1)
+          python3 scripts/sync_sheets.py out/job.final.json "$VIDEO"
+
       - name: Publish files
         shell: bash
         env:
@@ -89,7 +107,7 @@ jobs:
         run: |
           cd out
           shopt -s nullglob
-          files=(*.mp4 *.mp3 *.png job.final.json)
+          files=(*.mp4 *.mp3 *.png *.jpg job.final.json audio-qc.json sync.json)
           ls -la
           gh release create "$TAG" --title "$JOB_ID ($MODE)" --notes "Rendered by $RUN_URL" --prerelease "${files[@]}"
           node ../scripts/result.mjs "https://github.com/${{ github.repository }}/releases/download/$TAG"
