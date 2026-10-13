@@ -1,7 +1,15 @@
 {
  "_about": "Indian-English pronunciation dictionary. guide: how each English word should sound (checked in the audio). always: words the voice is always given in this spelling, because it said them wrongly before. Updated automatically by the render workflow.",
  "always": {
-  "fat": "फैट"
+  "atoms": "ऐटम्स",
+  "blood": "ब्लड",
+  "breath": "ब्रेथ",
+  "carbon": "कार्बन",
+  "cell": "सेल",
+  "dioxide": "डाइऑक्साइड",
+  "fat": "फैट",
+  "kilograms": "किलोग्राम्स",
+  "water": "वॉटर"
  },
  "guide": {
   "actually": "एक्चुअली",
