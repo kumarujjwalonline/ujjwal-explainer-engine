@@ -55,11 +55,25 @@ jobs:
       - name: Sound effects
         run: bash scripts/sfx.sh public/sfx
 
+      - name: Restore earlier voice clips
+        uses: actions/cache/restore@v4
+        with:
+          path: .voice-cache
+          key: voice-${{ inputs.job_id }}-${{ github.run_id }}
+          restore-keys: voice-${{ inputs.job_id }}-
+
       - name: Voice (Kumar Ujjwal Hindi)
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           ELEVEN_MODEL: ${{ vars.ELEVEN_MODEL || 'eleven_v3' }}
         run: node scripts/voice.mjs "$JOB" ${{ inputs.mode == 'preview' && 'none' || inputs.mode }}
+
+      - name: Save voice clips for later runs
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .voice-cache
+          key: voice-${{ inputs.job_id }}-${{ github.run_id }}
 
       - name: Render
         if: inputs.mode != 'sample'

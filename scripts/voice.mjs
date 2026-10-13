@@ -10,6 +10,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {execFileSync} from 'node:child_process';
+import crypto from 'node:crypto';
 
 const [jobPath, mode = 'full'] = process.argv.slice(2);
 const job = JSON.parse(fs.readFileSync(jobPath, 'utf8'));
@@ -21,13 +22,34 @@ fs.mkdirSync(outDir, {recursive: true});
 fs.mkdirSync('out', {recursive: true});
 
 // Production rules: start at 75% similarity, then tune stability/style/speed.
+// job.voice (set from WhatsApp change requests) overrides the defaults.
+const jv = job.voice || {};
+const clamp = (v, lo, hi, d) => (Number.isFinite(Number(v)) ? Math.min(hi, Math.max(lo, Number(v))) : d);
+let stability = clamp(jv.stability ?? process.env.ELEVEN_STABILITY, 0, 1, 0.5);
+// eleven_v3 only accepts 0 (creative), 0.5 (natural) or 1 (robust).
+if (MODEL === 'eleven_v3') stability = [0, 0.5, 1].reduce((a, b) => (Math.abs(b - stability) < Math.abs(a - stability) ? b : a));
 const settings = {
-  stability: Number(process.env.ELEVEN_STABILITY ?? 0.5),
-  similarity_boost: Number(process.env.ELEVEN_SIMILARITY ?? 0.75),
-  style: Number(process.env.ELEVEN_STYLE ?? 0.3),
-  speed: Number(process.env.ELEVEN_SPEED ?? 1.0),
+  stability,
+  similarity_boost: clamp(jv.similarity_boost ?? process.env.ELEVEN_SIMILARITY, 0, 1, 0.75),
+  style: clamp(jv.style ?? process.env.ELEVEN_STYLE, 0, 1, 0.3),
+  speed: clamp(jv.speed ?? process.env.ELEVEN_SPEED, 0.7, 1.2, 1.0),
   use_speaker_boost: true,
 };
+console.log('Voice settings', settings);
+
+// Pronunciation fixes: [{word, say_as}] replace the word only in the text sent to ElevenLabs.
+const esc = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const fixes = (jv.pronunciations || []).filter((x) => x && x.word && x.say_as);
+const spoken = (text) =>
+  fixes.reduce((t, x) => t.replace(new RegExp(`(^|[^\\p{L}\\p{M}])${esc(x.word)}(?=$|[^\\p{L}\\p{M}])`, 'giu'), `$1${x.say_as}`), text);
+
+// Unchanged lines reuse audio from earlier runs of this job (restored by the workflow cache),
+// so a change request only spends ElevenLabs credits on the lines that changed.
+const cacheDir = path.join('.voice-cache', job.id);
+fs.mkdirSync(cacheDir, {recursive: true});
+const keyFor = (text) => crypto.createHash('sha1').update(JSON.stringify([VOICE, MODEL, settings, text])).digest('hex').slice(0, 16);
+let reused = 0;
+let generated = 0;
 
 const probe = (file) =>
   Number(execFileSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=nw=1:nk=1', file]).toString().trim());
@@ -73,24 +95,40 @@ const run = async () => {
   }
   let scenes = job.scenes;
   if (mode === 'sample') {
-    let t = 0;
-    scenes = [];
-    for (const s of job.scenes) {
-      scenes.push(s);
-      t += s.durationSec || 5;
-      if (t >= 30) break;
+    // After a change request the sample plays the changed lines; otherwise the first ~30 s.
+    const pick = new Set(job.sample_scenes || []);
+    const chosen = job.scenes.filter((s) => pick.has(s.id));
+    if (chosen.length) scenes = chosen.slice(0, 8);
+    else {
+      let t = 0;
+      scenes = [];
+      for (const s of job.scenes) {
+        scenes.push(s);
+        t += s.durationSec || 5;
+        if (t >= 30) break;
+      }
     }
   }
   const files = [];
   for (const s of scenes) {
     const file = path.join(outDir, `${s.id}.mp3`);
-    await tts(s.narration, file);
+    const text = spoken(s.narration);
+    const cached = path.join(cacheDir, `${keyFor(text)}.mp3`);
+    if (fs.existsSync(cached)) {
+      fs.copyFileSync(cached, file);
+      reused++;
+    } else {
+      await tts(text, file);
+      fs.copyFileSync(file, cached);
+      generated++;
+    }
     const d = probe(file);
     s.durationSec = Math.round((d + 0.45) * 100) / 100; // a breath after each line
     s.audio = `jobs/${job.id}/${s.id}.mp3`;
     files.push(file);
     console.log(`${s.id}: ${d.toFixed(2)}s`);
   }
+  console.log(`Audio: ${generated} lines generated, ${reused} reused from earlier runs`);
   if (mode === 'sample') {
     const list = path.join(outDir, 'list.txt');
     fs.writeFileSync(list, files.map((f) => `file '${path.resolve(f)}'`).join('\n'));

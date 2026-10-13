@@ -75,3 +75,11 @@ Tones: `neutral`, `accent` (orange), `warn` (yellow), `good` (green), `bad` (red
 
 - Borders: Natural Earth 1:10m admin-0 countries, India point-of-view edition (public domain), simplified.
 - Icons: in-house SVG. SFX: synthesised with ffmpeg at render time. Fonts: Inter and Poppins (SIL OFL).
+
+## Change requests (voice and video)
+
+n8n edits the job file in `jobs/` when you ask for changes on WhatsApp, then re-runs the render.
+
+- `voice`: `{ "stability": 0 | 0.5 | 1, "similarity_boost": 0–1, "style": 0–1, "speed": 0.7–1.2, "pronunciations": [{ "word": "triglyceride", "say_as": "try-glis-uh-ride" }] }`. Pronunciations change only the text sent to ElevenLabs, never the on-screen text.
+- `sample_scenes`: scene ids the 30-second voice sample should play (the changed lines). Without it, the sample is the opening ~30 seconds.
+- Voice clips are cached per job between runs (GitHub Actions cache), keyed by text + voice settings, so only changed lines are re-recorded.

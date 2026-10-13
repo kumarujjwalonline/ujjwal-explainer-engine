@@ -2,3 +2,4 @@ node_modules
 out
 public/jobs
 .DS_Store
+.voice-cache
