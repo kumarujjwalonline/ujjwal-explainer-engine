@@ -45,6 +45,20 @@ def pubmed_url(title):
         return None
 
 
+def wayback(url):
+    """The Internet Archive's most recent saved copy of the same page (a real capture, not a recreation).
+    The 'if_' form shows the page without the archive's toolbar."""
+    try:
+        q = urllib.parse.urlencode({"url": url})
+        data = json.load(urllib.request.urlopen(f"https://archive.org/wayback/available?{q}", timeout=25))
+        snap = (data.get("archived_snapshots") or {}).get("closest") or {}
+        if snap.get("available") and str(snap.get("status", "200")).startswith("2"):
+            return f"https://web.archive.org/web/{snap['timestamp']}if_/{url}", snap["timestamp"]
+    except Exception:  # noqa: BLE001
+        pass
+    return None, None
+
+
 def capture(ctx, url, sid):
     page = ctx.new_page()
     try:
@@ -92,13 +106,24 @@ with sync_playwright() as p:
         result = capture(ctx, url, s["id"])
         if "shot" not in result:
             pmid = pubmed_url(v.get("title"))
-            # the study's record on PubMed, then on Europe PMC (same paper, gentler bot checks)
-            for alt in ([f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/", f"https://europepmc.org/article/MED/{pmid}"] if pmid else []):
-                second = capture(ctx, alt, s["id"])
+            candidates = [url]
+            if pmid:
+                candidates += [f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/", f"https://europepmc.org/article/MED/{pmid}"]
+            # 1) the study's record on PubMed / Europe PMC, 2) the Internet Archive's saved copy of each page
+            tries = [(c, c) for c in candidates[1:]]
+            for c in candidates:
+                arch, ts = wayback(c)
+                if arch:
+                    tries.append((arch, c))
+            for target, original in tries:
+                second = capture(ctx, target, s["id"])
                 if "shot" in second:
+                    second["capturedUrl"] = original
+                    if "web.archive.org" in target:
+                        second["archived"] = target
                     result = second
                     break
-                result["shot_error"] += f"; {alt.split('/')[2]} failed ({second.get('shot_error')})"
+                result["shot_error"] += f"; {target.split('/')[2]} failed ({second.get('shot_error')})"
         v.update(result)
         done[url] = result
         report.append({"id": s["id"], "url": url, **result})

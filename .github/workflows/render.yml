@@ -135,7 +135,7 @@ jobs:
         id: plan
         if: inputs.mode != 'sample'
         run: |
-          shards=$(node scripts/render.mjs out/job.final.json plan ${{ inputs.mode }} 8 2> >(tee out/plan.log >&2))
+          shards=$(node scripts/render.mjs out/job.final.json plan ${{ inputs.mode }} 16 2> >(tee out/plan.log >&2))
           echo "shards=$shards" >> "$GITHUB_OUTPUT"
           echo "::notice title=Render plan::$(cat out/plan.log | tail -1)"
 

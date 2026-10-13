@@ -7,7 +7,7 @@ import {Region, useBox, useEnter, useFade, useUnit} from '../components/Box';
 // when and why. The screenshot is taken from the live page on GitHub (scripts/fetch_sources.py).
 // If the page could not be captured, the card shows the details without a picture: a source is
 // never recreated or faked.
-export type SourceSpec = {url: string; publisher: string; authors?: string; date?: string; title?: string; why?: string; shot?: string; shotRatio?: number; capturedUrl?: string};
+export type SourceSpec = {url: string; publisher: string; authors?: string; date?: string; title?: string; why?: string; shot?: string; shotRatio?: number; capturedUrl?: string; archived?: string};
 
 const domain = (u: string) => {
   try {
@@ -17,7 +17,7 @@ const domain = (u: string) => {
   }
 };
 
-export const SourceCard: React.FC<SourceSpec> = ({url, publisher, authors, date, title, why, shot, shotRatio, capturedUrl}) => {
+export const SourceCard: React.FC<SourceSpec> = ({url, publisher, authors, date, title, why, shot, shotRatio, capturedUrl, archived}) => {
   const u = useUnit();
   const b = useBox();
   const f = useCurrentFrame();
@@ -43,6 +43,7 @@ export const SourceCard: React.FC<SourceSpec> = ({url, publisher, authors, date,
         <div style={{height: 46 * u, flex: 'none', background: '#E9EDF2', display: 'flex', alignItems: 'center', gap: 10 * u, padding: `0 ${16 * u}px`}}>
           {['#FF5F57', '#FEBC2E', '#28C840'].map((c) => <span key={c} style={{width: 12 * u, height: 12 * u, borderRadius: 6 * u, background: c}} />)}
           <div style={{flex: 1, marginLeft: 12 * u, height: 28 * u, borderRadius: 14 * u, background: '#FFFFFF', color: '#3A4A5E', fontSize: 17 * u, display: 'flex', alignItems: 'center', padding: `0 ${14 * u}px`, overflow: 'hidden', whiteSpace: 'nowrap'}}>🔒 {domain(capturedUrl || url)}</div>
+          {archived ? <div style={{flex: 'none', fontSize: 14 * u, color: '#5A6B80', fontWeight: 600}}>Archived copy · web.archive.org</div> : null}
         </div>
         <div style={{flex: 1, position: 'relative', overflow: 'hidden', background: shot ? '#FFFFFF' : colors.panel}}>
           {shot ? (

@@ -64,16 +64,26 @@ const chunksOf = (v) => {
   const ids = v.props.sceneIds;
   const scenes = ids && ids.length ? job.scenes.filter((s) => ids.includes(s.id)) : job.scenes;
   let at = 0;
-  return scenes.map((s) => {
+  const out = [];
+  for (const s of scenes) {
     const frames = sceneFrames(s);
-    const from = at;
+    const start = at;
     at += frames;
     const vis = s.visual || {};
+    const heavy = HEAVY.has(vis.type);
     const {narration, audio, sfx, ...look} = s; // sound does not change the picture
     const files = [vis.shot, vis.src].filter(Boolean).map(fileHash);
-    const key = sha({CODE, look, frames, files, state: STATES[s.id], tracker: job.tracker, format: v.props.format, scale: v.scale, hook: v.props.hook && from < 4 * FPS ? [v.props.hook, from] : null});
-    return {key, scene: s.id, from, to: from + frames - 1, weight: frames * (HEAVY.has(vis.type) ? 5 : 1)};
-  });
+    const sceneKey = {CODE, look, frames, files, state: STATES[s.id], tracker: job.tracker, format: v.props.format, scale: v.scale, hook: v.props.hook && start < 4 * FPS ? [v.props.hook, start] : null};
+    // 3D scenes are cut into ~3 s pieces so many machines can share one scene.
+    const piece = heavy ? 90 : 450;
+    const n = Math.max(1, Math.round(frames / piece));
+    for (let i = 0; i < n; i++) {
+      const a = Math.round((frames * i) / n);
+      const b = Math.round((frames * (i + 1)) / n) - 1;
+      out.push({key: sha({...sceneKey, a, b}), scene: n > 1 ? `${s.id}.${i + 1}` : s.id, from: start + a, to: start + b, weight: (b - a + 1) * (heavy ? 5 : 1)});
+    }
+  }
+  return out;
 };
 const chunkFile = (c) => path.join(CACHE, `${c.key}.mp4`);
 
@@ -93,14 +103,14 @@ const base = (composition, inputProps, scale) => ({
 
 if (cmd === 'plan') {
   const mode = args[0] || 'full';
-  const max = Number(args[1] || 8);
+  const max = Number(args[1] || 16);
   const vids = videos(mode).map((v) => ({...v, props: {...v.props, job: undefined}, chunks: chunksOf(v)}));
   const todo = new Map();
   for (const v of vids) for (const c of v.chunks) if (!fs.existsSync(chunkFile(c))) todo.set(c.key, {...c, video: v.name});
   const work = [...todo.values()].sort((a, b) => b.weight - a.weight);
   const total = work.reduce((a, c) => a + c.weight, 0);
-  // about one machine per 45 s of weighted work, up to max
-  const n = work.length ? Math.max(1, Math.min(max, Math.ceil(total / (45 * FPS)), work.length)) : 0;
+  // about one machine per 30 s of weighted work, up to max
+  const n = work.length ? Math.max(1, Math.min(max, Math.ceil(total / (30 * FPS)), work.length)) : 0;
   const shards = Array.from({length: n}, () => ({weight: 0, chunks: []}));
   for (const c of work) {
     const s = shards.reduce((m, x) => (x.weight < m.weight ? x : m), shards[0]);
