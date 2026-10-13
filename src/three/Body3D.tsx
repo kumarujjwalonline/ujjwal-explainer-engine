@@ -1,13 +1,14 @@
-import React, {useMemo} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {ThreeCanvas} from '@remotion/three';
 import {useThree} from '@react-three/fiber';
 import * as THREE from 'three';
-import {interpolate, useCurrentFrame, useVideoConfig, Easing} from 'remotion';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {continueRender, delayRender, interpolate, staticFile, useCurrentFrame, useVideoConfig, Easing} from 'remotion';
 import {colors, fonts} from '../theme';
 import {Region, useBox, useUnit} from '../components/Box';
 
 // Production rule 14: 3D human body walkthrough for health and fitness topics.
-// A see-through, stylised body (no licensed model needed) with organs placed anatomically.
+// Real anatomical meshes (BodyParts3D): see-through skin, skeleton, muscles, organs and vessels.
 // The camera flies to each step's organ in turn while the narration explains it, and
 // glowing particles travel the route in "flow" (e.g. fat -> blood -> lungs -> breath out).
 
@@ -25,129 +26,167 @@ export type BodySpec = {
 const V = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
 // Internal 3D resolution: GitHub has no GPU, so WebGL runs in software and cost grows with pixels.
 export const THREE_DPR = 0.6;
-// Viewer faces the body: the person's right side is at negative x.
-const POS: Record<Organ, THREE.Vector3> = {
-  brain: V(0, 1.53, 0),
-  nose: V(0, 1.42, 0.16),
-  lungs: V(0, 0.7, 0),
-  heart: V(0.05, 0.62, 0.07),
-  liver: V(-0.12, 0.4, 0.05),
-  stomach: V(0.11, 0.36, 0.06),
-  pancreas: V(0.04, 0.29, 0.02),
-  intestines: V(0, 0.12, 0.05),
-  kidneys: V(0, 0.26, -0.08),
-  bladder: V(0, -0.1, 0.05),
-  fat: V(0, 0.17, 0.2),
-  muscle: V(0.11, -0.58, 0.02),
-  blood: V(0, 0.45, 0.02),
-  skin: V(0.29, 0.25, 0.12),
-  bones: V(0, -0.9, 0),
+
+// Real anatomy: meshes from BodyParts3D (DBCLS, CC BY 4.0), built by scripts/build_anatomy.py into
+// public/anatomy/*.glb. Metres, Y up, feet at y = 0, the person faces +z (towards the camera).
+const GROUPS = ['skin', 'skeleton', 'muscles', 'brain', 'nose', 'airways', 'lungs', 'heart', 'liver', 'gallbladder', 'stomach', 'esophagus', 'pancreas', 'intestines', 'kidneys', 'bladder', 'diaphragm', 'arteries', 'veins'] as const;
+type Group = (typeof GROUPS)[number];
+type Anatomy = Partial<Record<Group, THREE.BufferGeometry>>;
+let anatomyPromise: Promise<Anatomy> | null = null;
+const loadAnatomy = () => {
+  if (!anatomyPromise) {
+    const loader = new GLTFLoader();
+    anatomyPromise = Promise.all(
+      GROUPS.map((g) =>
+        loader
+          .loadAsync(staticFile(`anatomy/${g}.glb`))
+          .then((gltf) => {
+            let geo: THREE.BufferGeometry | undefined;
+            gltf.scene.traverse((o) => {
+              if (!geo && (o as THREE.Mesh).isMesh) geo = (o as THREE.Mesh).geometry;
+            });
+            if (geo) {
+              geo.computeVertexNormals();
+              geo.computeBoundingBox();
+            }
+            return [g, geo] as const;
+          })
+          .catch(() => [g, undefined] as const),
+      ),
+    ).then((pairs) => Object.fromEntries(pairs.filter(([, geo]) => geo)) as Anatomy);
+  }
+  return anatomyPromise;
 };
-const PARTICLE: Record<string, string> = {CO2: '#D9E2EC', O2: '#5BC0FF', fat: '#F2C94C', water: '#4FC3F7', glucose: '#FF8A1F', blood: '#E5383B', signal: '#B388FF'};
+const useAnatomy = () => {
+  const [handle] = useState(() => delayRender('Loading anatomy models', {timeoutInMilliseconds: 120000}));
+  const [a, setA] = useState<Anatomy | null>(null);
+  useEffect(() => {
+    loadAnatomy().then((r) => {
+      setA(r);
+      continueRender(handle);
+    });
+  }, [handle]);
+  return a;
+};
 
-const Ellipsoid: React.FC<{p: THREE.Vector3; r: [number, number, number]; color: string; glow: number; dim: boolean}> = ({p, r, color, glow, dim}) => (
-  <mesh position={p} scale={r}>
-    <sphereGeometry args={[1, 22, 16]} />
-    <meshStandardMaterial color={color} emissive={glow > 0 ? colors.orange : color} emissiveIntensity={glow > 0 ? 0.6 + glow : 0.12} transparent opacity={dim ? 0.28 : 0.92} roughness={0.45} />
-  </mesh>
-);
+// Which meshes each organ in the script lights up.
+const ORGAN_GROUPS: Record<Organ, Group[]> = {
+  brain: ['brain'], nose: ['nose', 'airways'], lungs: ['lungs', 'airways'], heart: ['heart'], liver: ['liver', 'gallbladder'],
+  stomach: ['stomach', 'esophagus'], pancreas: ['pancreas'], intestines: ['intestines'], kidneys: ['kidneys'], bladder: ['bladder'],
+  fat: ['skin'], muscle: ['muscles'], blood: ['arteries', 'veins', 'heart'], skin: ['skin'], bones: ['skeleton'],
+};
+// Natural tissue colours.
+const LOOK: Record<Group, {color: string; base: number}> = {
+  skin: {color: '#9CC8F0', base: 0.1},
+  skeleton: {color: '#EDE3CF', base: 0.5},
+  muscles: {color: '#B8433A', base: 0.16},
+  brain: {color: '#E9B7BE', base: 0.95},
+  nose: {color: '#E7B9A3', base: 0.6},
+  airways: {color: '#F3C6C0', base: 0.85},
+  lungs: {color: '#E58C8F', base: 0.62},
+  heart: {color: '#B3202E', base: 0.97},
+  liver: {color: '#7A2A22', base: 0.95},
+  gallbladder: {color: '#5E8C3A', base: 0.95},
+  stomach: {color: '#D98C7A', base: 0.95},
+  esophagus: {color: '#D9978A', base: 0.9},
+  pancreas: {color: '#E8C083', base: 0.95},
+  intestines: {color: '#E3A08F', base: 0.92},
+  kidneys: {color: '#8E2D36', base: 0.95},
+  bladder: {color: '#E9C46A', base: 0.9},
+  diaphragm: {color: '#B5554A', base: 0.35},
+  arteries: {color: '#D62828', base: 0.85},
+  veins: {color: '#3A5BA0', base: 0.75},
+};
+const center = (a: Anatomy, gs: Group[]) => {
+  const box = new THREE.Box3();
+  gs.forEach((g) => a[g]?.boundingBox && box.union(a[g]!.boundingBox!));
+  return box.isEmpty() ? null : box.getCenter(new THREE.Vector3());
+};
+// Camera / route anchor for each organ, worked out from the real meshes.
+const anchors = (a: Anatomy): Record<Organ, THREE.Vector3> => {
+  const H = a.skin?.boundingBox ? a.skin.boundingBox.max.y : 1.7;
+  const c = (gs: Group[], fallback: THREE.Vector3) => center(a, gs) || fallback;
+  const heart = c(['heart'], V(0.02, H * 0.72, 0.03));
+  const front = a.skin?.boundingBox ? a.skin.boundingBox.max.z : 0.15;
+  return {
+    brain: c(['brain'], V(0, H * 0.93, 0)),
+    nose: c(['nose'], V(0, H * 0.9, 0.09)),
+    lungs: c(['lungs'], V(0, H * 0.74, 0)),
+    heart,
+    liver: c(['liver'], V(-0.08, H * 0.64, 0.03)),
+    stomach: c(['stomach'], V(0.06, H * 0.63, 0.04)),
+    pancreas: c(['pancreas'], V(0.02, H * 0.6, 0)),
+    intestines: c(['intestines'], V(0, H * 0.54, 0.04)),
+    kidneys: c(['kidneys'], V(0, H * 0.6, -0.05)),
+    bladder: c(['bladder'], V(0, H * 0.48, 0.03)),
+    fat: V(0, H * 0.57, front * 0.75),
+    muscle: V(-0.1, H * 0.38, 0.01),
+    blood: heart,
+    skin: V(-0.15, H * 0.62, front * 0.6),
+    bones: c(['skeleton'], V(0, H * 0.75, 0)),
+  };
+};
 
-const Organs: React.FC<{active?: Organ; pulse: number}> = ({active, pulse}) => {
-  const g = (o: Organ) => (active === o ? pulse : 0);
-  const d = (o: Organ) => !!active && active !== o;
+const Part: React.FC<{geo: THREE.BufferGeometry; group: Group; state: 'focus' | 'dim' | 'normal'; pulse: number}> = ({geo, group, state, pulse}) => {
+  const look = LOOK[group];
+  const shell = group === 'skin';
+  const opacity = state === 'focus' ? (shell ? 0.35 : 1) : state === 'dim' ? look.base * (shell ? 0.9 : 0.3) : look.base;
+  return (
+    <mesh geometry={geo} renderOrder={shell ? 10 : group === 'muscles' ? 5 : 0}>
+      <meshStandardMaterial
+        color={state === 'focus' && shell ? '#F2C94C' : look.color}
+        emissive={state === 'focus' ? colors.orange : shell ? '#2A5A8A' : look.color}
+        emissiveIntensity={state === 'focus' ? 0.25 + pulse * 0.6 : shell ? 0.35 : 0.08}
+        roughness={shell ? 0.25 : 0.55}
+        metalness={0.05}
+        transparent={opacity < 0.99}
+        opacity={opacity}
+        depthWrite={opacity > 0.6}
+        side={shell ? THREE.FrontSide : THREE.DoubleSide}
+      />
+    </mesh>
+  );
+};
+
+const Anatomy3D: React.FC<{a: Anatomy; active?: Organ; pulse: number}> = ({a, active, pulse}) => {
+  const lit = new Set<Group>(active ? ORGAN_GROUPS[active] : []);
   return (
     <group>
-      <Ellipsoid p={POS.brain} r={[0.13, 0.1, 0.14]} color="#E8A0B4" glow={g('brain')} dim={d('brain')} />
-      <Ellipsoid p={V(-0.14, 0.7, 0)} r={[0.11, 0.2, 0.09]} color="#F08A8A" glow={g('lungs')} dim={d('lungs')} />
-      <Ellipsoid p={V(0.14, 0.7, 0)} r={[0.1, 0.19, 0.09]} color="#F08A8A" glow={g('lungs')} dim={d('lungs')} />
-      <mesh position={V(0, 0.98, 0)}>
-        <cylinderGeometry args={[0.025, 0.025, 0.28, 12]} />
-        <meshStandardMaterial color="#F0B0B0" transparent opacity={d('lungs') ? 0.25 : 0.8} />
-      </mesh>
-      <Ellipsoid p={POS.heart} r={[0.07, 0.08, 0.06]} color="#D7263D" glow={g('heart')} dim={d('heart')} />
-      <Ellipsoid p={POS.liver} r={[0.16, 0.08, 0.08]} color="#8B3A3A" glow={g('liver')} dim={d('liver')} />
-      <Ellipsoid p={POS.stomach} r={[0.09, 0.07, 0.06]} color="#E39B7B" glow={g('stomach')} dim={d('stomach')} />
-      <Ellipsoid p={POS.pancreas} r={[0.09, 0.025, 0.03]} color="#E8C27A" glow={g('pancreas')} dim={d('pancreas')} />
-      <mesh position={POS.intestines}>
-        <torusKnotGeometry args={[0.1, 0.03, 64, 8, 2, 5]} />
-        <meshStandardMaterial color="#E7A6A1" emissive={g('intestines') ? colors.orange : '#E7A6A1'} emissiveIntensity={g('intestines') ? 0.6 + g('intestines') : 0.1} transparent opacity={d('intestines') ? 0.28 : 0.9} />
-      </mesh>
-      <Ellipsoid p={V(-0.1, 0.26, -0.08)} r={[0.04, 0.07, 0.035]} color="#9C2F3F" glow={g('kidneys')} dim={d('kidneys')} />
-      <Ellipsoid p={V(0.1, 0.26, -0.08)} r={[0.04, 0.07, 0.035]} color="#9C2F3F" glow={g('kidneys')} dim={d('kidneys')} />
-      <Ellipsoid p={POS.bladder} r={[0.05, 0.045, 0.045]} color="#F2D16B" glow={g('bladder')} dim={d('bladder')} />
-      {/* Belly fat: a soft yellow layer with visible fat cells */}
-      <mesh position={V(0, 0.17, 0.04)} scale={[0.27, 0.2, 0.19]}>
-        <sphereGeometry args={[1, 22, 16]} />
-        <meshStandardMaterial color="#F2C94C" emissive={g('fat') ? colors.orange : '#F2C94C'} emissiveIntensity={g('fat') ? 0.4 + g('fat') : 0.08} transparent opacity={d('fat') ? 0.08 : 0.22} depthWrite={false} />
-      </mesh>
-      {Array.from({length: 14}, (_, i) => {
-        const a = (i / 14) * Math.PI * 2;
-        return (
-          <mesh key={i} position={V(Math.cos(a) * 0.12, 0.17 + Math.sin(a * 2) * 0.07, 0.19 + (i % 3) * 0.01)}>
-            <sphereGeometry args={[0.028, 10, 8]} />
-            <meshStandardMaterial color="#F7D774" emissive="#F2C94C" emissiveIntensity={g('fat') ? 0.5 + g('fat') : 0.15} transparent opacity={d('fat') ? 0.25 : 0.95} />
-          </mesh>
-        );
+      {GROUPS.map((g) => {
+        const geo = a[g];
+        if (!geo) return null;
+        const state = lit.has(g) ? 'focus' : active ? 'dim' : 'normal';
+        return <Part key={g} geo={geo} group={g} state={state} pulse={pulse} />;
       })}
-      {[-0.11, 0.11].map((x) => (
-        <mesh key={x} position={V(x, -0.58, 0.02)}>
-          <capsuleGeometry args={[0.075, 0.42, 8, 16]} />
-          <meshStandardMaterial color="#C0392B" emissive={g('muscle') ? colors.orange : '#C0392B'} emissiveIntensity={g('muscle') ? 0.5 + g('muscle') : 0.1} transparent opacity={d('muscle') ? 0.22 : 0.75} />
-        </mesh>
-      ))}
-    </group>
-  );
-};
-
-const Shell: React.FC = () => {
-  const fill = {color: '#6FA8DC', emissive: '#2A4F7A', emissiveIntensity: 0.4, transparent: true, opacity: 0.16, depthWrite: false, roughness: 0.3} as const;
-  const part = (key: string, pos: THREE.Vector3, geo: React.ReactNode, scale: [number, number, number] = [1, 1, 1], rot: [number, number, number] = [0, 0, 0]) => (
-    <group key={key} position={pos} scale={scale} rotation={rot}>
-      <mesh>{geo}<meshStandardMaterial {...fill} /></mesh>
-    </group>
-  );
-  return (
-    <group>
-      {part('head', V(0, 1.52, 0), <sphereGeometry args={[0.17, 32, 24]} />, [1, 1.12, 1.05])}
-      {part('neck', V(0, 1.27, 0), <cylinderGeometry args={[0.07, 0.08, 0.18, 20]} />)}
-      {part('torso', V(0, 0.5, 0), <capsuleGeometry args={[0.24, 0.62, 12, 24]} />, [1.15, 1, 0.72])}
-      {part('pelvis', V(0, -0.05, 0), <sphereGeometry args={[0.26, 28, 20]} />, [1.05, 0.62, 0.72])}
-      {part('armL', V(-0.4, 0.55, 0), <capsuleGeometry args={[0.06, 0.62, 8, 16]} />, [1, 1, 1], [0, 0, -0.1])}
-      {part('armR', V(0.4, 0.55, 0), <capsuleGeometry args={[0.06, 0.62, 8, 16]} />, [1, 1, 1], [0, 0, 0.1])}
-      {part('foreL', V(-0.47, -0.05, 0.02), <capsuleGeometry args={[0.05, 0.5, 8, 16]} />, [1, 1, 1], [0, 0, -0.05])}
-      {part('foreR', V(0.47, -0.05, 0.02), <capsuleGeometry args={[0.05, 0.5, 8, 16]} />, [1, 1, 1], [0, 0, 0.05])}
-      {part('legL', V(-0.12, -0.62, 0), <capsuleGeometry args={[0.1, 0.56, 8, 16]} />)}
-      {part('legR', V(0.12, -0.62, 0), <capsuleGeometry args={[0.1, 0.56, 8, 16]} />)}
-      {part('shinL', V(-0.12, -1.32, 0), <capsuleGeometry args={[0.075, 0.6, 8, 16]} />)}
-      {part('shinR', V(0.12, -1.32, 0), <capsuleGeometry args={[0.075, 0.6, 8, 16]} />)}
     </group>
   );
 };
 
 // Route through the body; "blood" passes through the main vessels via the heart.
-const routePoints = (path: Organ[]) => {
+const routePoints = (path: Organ[], POS: Record<Organ, THREE.Vector3>) => {
   const pts: THREE.Vector3[] = [];
   path.forEach((o, i) => {
     if (o === 'blood') {
       const prev = path[i - 1] ? POS[path[i - 1]] : POS.heart;
-      pts.push(V((prev.x + POS.heart.x) / 2 + 0.06, (prev.y + POS.heart.y) / 2, 0.02), POS.heart.clone());
+      pts.push(V((prev.x + POS.heart.x) / 2 + 0.03, (prev.y + POS.heart.y) / 2, POS.heart.z), POS.heart.clone());
     } else if (o === 'lungs') {
-      pts.push(V(0.14, 0.66, 0.02), V(0, 0.95, 0.02));
+      // into the right lung, then up the windpipe
+      pts.push(V(POS.lungs.x + 0.07, POS.lungs.y - 0.02, POS.lungs.z), V(POS.heart.x * 0, POS.lungs.y + 0.16, POS.lungs.z + 0.01));
     } else pts.push(POS[o].clone());
   });
-  if (path[path.length - 1] === 'nose') pts.push(V(0, 1.42, 0.55), V(0, 1.45, 1.1)); // breathed out
-  if (pts.length === 1) pts.push(pts[0].clone().add(V(0, 0.2, 0.2)));
+  if (path[path.length - 1] === 'nose') pts.push(POS.nose.clone().add(V(0, -0.01, 0.25)), POS.nose.clone().add(V(0, 0, 0.6))); // breathed out
+  if (pts.length === 1) pts.push(pts[0].clone().add(V(0, 0.1, 0.1)));
   return pts;
 };
 
-const Flow: React.FC<{path: Organ[]; color: string; t: number; show: number}> = ({path, color, t, show}) => {
-  const curve = useMemo(() => new THREE.CatmullRomCurve3(routePoints(path), false, 'catmullrom', 0.3), [path.join(',')]);
-  const tube = useMemo(() => new THREE.TubeGeometry(curve, 100, 0.012, 6, false), [curve]);
+const Flow: React.FC<{path: Organ[]; pos: Record<Organ, THREE.Vector3>; color: string; t: number; show: number}> = ({path, pos, color, t, show}) => {
+  const curve = useMemo(() => new THREE.CatmullRomCurve3(routePoints(path, pos), false, 'catmullrom', 0.3), [path.join(','), pos]);
+  const tube = useMemo(() => new THREE.TubeGeometry(curve, 100, 0.005, 6, false), [curve]);
   const N = 22;
   return (
     <group>
       <mesh geometry={tube}>
-        <meshBasicMaterial color={color} transparent opacity={0.35 * show} />
+        <meshBasicMaterial color={color} transparent opacity={0.45 * show} depthTest={false} />
       </mesh>
       {Array.from({length: N}, (_, i) => {
         const u = (t * 0.35 + i / N) % 1;
@@ -156,8 +195,8 @@ const Flow: React.FC<{path: Organ[]; color: string; t: number; show: number}> = 
         const fadeOut = path[path.length - 1] === 'nose' ? interpolate(u, [0.82, 1], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}) : 1;
         return (
           <mesh key={i} position={p}>
-            <sphereGeometry args={[0.022, 8, 6]} />
-            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1.4} transparent opacity={fadeOut} />
+            <sphereGeometry args={[0.011, 8, 6]} />
+            <meshStandardMaterial color={color} emissive={color} emissiveIntensity={1.6} transparent opacity={fadeOut} depthTest={false} />
           </mesh>
         );
       })}
@@ -182,14 +221,18 @@ export const Body3D: React.FC<BodySpec> = ({focus, steps = [], flow, caption}) =
   const b = useBox();
   const u = useUnit();
   const portrait = b.w < b.h;
+  const a = useAnatomy();
+  const POS = useMemo(() => (a ? anchors(a) : null), [a]);
   const n = steps.length;
   // Steps share the first 85 % of the scene; the camera eases from one organ to the next.
   const intro0 = Math.round(durationInFrames * 0.18); // establishing shot of the whole body
   const span = (durationInFrames * 0.85 - intro0) / Math.max(1, n);
   const idx = n ? (f < intro0 ? 0 : Math.min(n - 1, Math.floor((f - intro0) / span))) : -1;
   const active: Organ | undefined = n ? (f < intro0 ? undefined : steps[idx].organ) : focus;
-  const whole = {t: V(0, 0.15, 0), d: 6.2};
-  const shot = (o?: Organ) => (o ? {t: POS[o], d: o === 'muscle' || o === 'bones' ? 3.2 : 2.5} : whole);
+  const H = a?.skin?.boundingBox?.max.y || 1.7;
+  const whole = {t: V(0, H * 0.5, 0), d: H * 2.15};
+  const far: Partial<Record<Organ, number>> = {muscle: 1.7, bones: 2.0, blood: 2.6, skin: 1.6, intestines: 1.15, lungs: 1.25, fat: 1.2};
+  const shot = (o?: Organ) => (o && POS ? {t: POS[o], d: far[o] || 0.95} : whole);
   const intro = interpolate(f, [0, Math.min(40, durationInFrames * 0.25)], [0, 1], {extrapolateRight: 'clamp', easing: Easing.inOut(Easing.cubic)});
   const prev = idx > 0 ? shot(steps[idx - 1].organ) : whole;
   const cur = shot(active);
@@ -204,14 +247,14 @@ export const Body3D: React.FC<BodySpec> = ({focus, steps = [], flow, caption}) =
   return (
     <Region>
       <ThreeCanvas width={b.w} height={b.h} dpr={THREE_DPR} style={{position: 'absolute', inset: 0}} gl={{antialias: true, preserveDrawingBuffer: true}}>
-        <Camera target={portrait ? target : target.clone().add(V(-0.22 * dist / 1.7, 0, 0))} dist={dist} orbit={orbit} aspect={b.w / b.h} />
-        <ambientLight intensity={0.55} />
-        <directionalLight position={[2, 3, 4]} intensity={1.1} />
-        <pointLight position={[-2, 1, 2]} intensity={0.8} color="#8EC5FF" />
+        <Camera target={portrait ? target : target.clone().add(V(-0.12 * dist, 0, 0))} dist={dist} orbit={orbit} aspect={b.w / b.h} />
+        <ambientLight intensity={0.45} />
+        <hemisphereLight args={['#DDEBFF', '#2B1B12', 0.6]} />
+        <directionalLight position={[1.5, 3, 3]} intensity={1.3} />
+        <directionalLight position={[-2, 1.5, -2]} intensity={0.7} color="#8EC5FF" />
         <group rotation={[0, interpolate(f, [0, durationInFrames], [-0.12, 0.12]), 0]}>
-          <Shell />
-          <Organs active={active} pulse={pulse} />
-          {flow ? <Flow path={flow.path} color={PARTICLE[flow.particle || 'CO2'] || '#D9E2EC'} t={f / fps} show={showFlow} /> : null}
+          {a ? <Anatomy3D a={a} active={active} pulse={pulse} /> : null}
+          {flow && POS ? <Flow path={flow.path} pos={POS} color={PARTICLE[flow.particle || 'CO2'] || '#D9E2EC'} t={f / fps} show={showFlow} /> : null}
         </group>
       </ThreeCanvas>
       {n ? (
