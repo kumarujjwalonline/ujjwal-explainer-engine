@@ -1,0 +1,1209 @@
+{
+  "title": "10 Kg Fat Kam Hua... Woh Gaya Kahan?",
+  "title_options": [
+    "10 Kg Fat Kam Hua... Woh Gaya Kahan?",
+    "Jab Aap Weight Kam Karte Ho, Fat Jaata Kahan Hai?",
+    "Weight Loss Ka Chhupa Sach: Fat Saans Se Nikalta Hai"
+  ],
+  "summary": "This video explains, using the 2014 BMJ study by Ruben Meerman and Andrew Brown, that when a person loses 10 kg of fat, about 8.4 kg physically leaves the body as exhaled carbon dioxide and 1.6 kg becomes water excreted through urine, sweat and breath. It walks through the law of conservation of mass, the biological journey of fat from fat cells to mitochondria to the lungs, and the real stoichiometric numbers behind it, correcting the common myth that fat simply converts into energy or heat.",
+  "tracker": {
+    "title": "Lesson progress",
+    "objectives": [
+      {
+        "id": "o1",
+        "label": "The Fat Mystery",
+        "children": [
+          {
+            "id": "o1a",
+            "label": "Hook question"
+          },
+          {
+            "id": "o1b",
+            "label": "Common myths"
+          },
+          {
+            "id": "o1c",
+            "label": "The real puzzle"
+          }
+        ]
+      },
+      {
+        "id": "o2",
+        "label": "Law of Conservation of Mass",
+        "children": [
+          {
+            "id": "o2a",
+            "label": "The law defined"
+          },
+          {
+            "id": "o2b",
+            "label": "Mass only transforms"
+          },
+          {
+            "id": "o2c",
+            "label": "Applying it to the body"
+          }
+        ]
+      },
+      {
+        "id": "o3",
+        "label": "Journey Inside the Body",
+        "children": [
+          {
+            "id": "o3a",
+            "label": "Fat cell storage"
+          },
+          {
+            "id": "o3b",
+            "label": "Lipolysis release"
+          },
+          {
+            "id": "o3c",
+            "label": "Bloodstream transport"
+          },
+          {
+            "id": "o3d",
+            "label": "Mitochondria oxidation"
+          },
+          {
+            "id": "o3e",
+            "label": "Exit routes"
+          }
+        ]
+      },
+      {
+        "id": "o4",
+        "label": "The Real Study and Numbers",
+        "children": [
+          {
+            "id": "o4a",
+            "label": "The BMJ study"
+          },
+          {
+            "id": "o4b",
+            "label": "Triglyceride formula"
+          },
+          {
+            "id": "o4c",
+            "label": "The calculation"
+          },
+          {
+            "id": "o4d",
+            "label": "84% vs 16%"
+          }
+        ]
+      },
+      {
+        "id": "o5",
+        "label": "What It Means For You",
+        "children": [
+          {
+            "id": "o5a",
+            "label": "Lungs as the exit organ"
+          },
+          {
+            "id": "o5b",
+            "label": "Exercise increases output"
+          },
+          {
+            "id": "o5c",
+            "label": "Breathing myth busted"
+          },
+          {
+            "id": "o5d",
+            "label": "The quiet payoff"
+          }
+        ]
+      }
+    ]
+  },
+  "facts": [
+    {
+      "fact": "BMJ published Ruben Meerman and Andrew Brown's paper 'When somebody loses weight, where does the fat go?' in its Christmas issue on 16 December 2014.",
+      "source": "The BMJ, 2014 (bmj.com/content/349/bmj.g7257)"
+    },
+    {
+      "fact": "Most doctors, dietitians and personal trainers surveyed wrongly believed fat converts into energy or heat, which violates the law of conservation of mass.",
+      "source": "Meerman & Brown, BMJ, 2014"
+    },
+    {
+      "fact": "Complete oxidation of 10 kg of human fat requires 29 kg of inhaled oxygen and produces 28 kg of carbon dioxide and 11 kg of water.",
+      "source": "Meerman & Brown, BMJ, 2014"
+    },
+    {
+      "fact": "When 10 kg of fat is lost, 8.4 kg (84%) leaves the body as exhaled carbon dioxide and 1.6 kg (16%) becomes water.",
+      "source": "Meerman & Brown, BMJ, 2014, Fig 2"
+    },
+    {
+      "fact": "The lungs are the primary excretory organ for weight loss; the water formed is excreted via urine, faeces, sweat, breath and tears.",
+      "source": "Meerman & Brown, BMJ, 2014"
+    },
+    {
+      "fact": "An average triglyceride (body fat) molecule has the chemical formula C55H104O6, first described by Hirsch and colleagues in 1960.",
+      "source": "BMJ, 2014; NUSci Magazine, 2016"
+    },
+    {
+      "fact": "At rest, a 70 kg person exhales about 200 ml of CO2 in 12 breaths per minute, each breath releasing 33 mg of CO2 containing 8.9 mg of carbon.",
+      "source": "Meerman & Brown, BMJ, 2014"
+    },
+    {
+      "fact": "Over 24 hours of sleep, rest and light activity, an average person loses about 203 grams of carbon from the body.",
+      "source": "Meerman & Brown, BMJ, 2014"
+    },
+    {
+      "fact": "Replacing one hour of rest with one hour of moderate exercise like jogging increases metabolic rate sevenfold, removing an extra 40 g of carbon and raising the daily total by about 20% to 240 g.",
+      "source": "ScienceDaily, 2014 (reporting BMJ study)"
+    },
+    {
+      "fact": "Standing up and getting dressed more than doubles resting metabolic rate; going for a walk roughly triples it.",
+      "source": "UNSW Newsroom, 2018"
+    },
+    {
+      "fact": "Metabolising 100 grams of fat consumes 290 grams of oxygen and produces 280 grams of carbon dioxide plus 110 grams of water.",
+      "source": "UNSW Newsroom, 2018"
+    },
+    {
+      "fact": "The law of conservation of mass states mass is neither created nor destroyed in a chemical reaction; it was conclusively demonstrated by French chemist Antoine Lavoisier around 1789.",
+      "source": "Nature Scitable, 2014; Wikipedia, Conservation of Mass"
+    },
+    {
+      "fact": "Carbon exhaled after fat loss comes from food made by plants within months or years, not from fossil fuels, so it does not add to climate change the way burning fossil carbon does.",
+      "source": "Ruben Meerman, quoted in ScienceDaily, 2014"
+    },
+    {
+      "fact": "Triglycerides (stored fat) are broken down by the enzyme lipase in a process called lipolysis into one glycerol molecule and three fatty acid molecules.",
+      "source": "CK-12 Foundation Chemistry Flexbook"
+    }
+  ],
+  "shorts": [
+    {
+      "id": "short-1",
+      "section": "o1",
+      "scenes": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06"
+      ],
+      "hook": "Where does lost fat actually go?",
+      "title": "Fat Jaata Kahan Hai Jab Weight Kam Hota Hai? #Shorts",
+      "description": "Sabse bada myth: fat energy ya heat ban jaata hai. Science kehta hai kuch aur. Dekhiye sach kya hai. #WeightLoss #Science #Hinglish",
+      "share_ready": true,
+      "verdict": ""
+    },
+    {
+      "id": "short-2",
+      "section": "o2",
+      "scenes": [
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12"
+      ],
+      "hook": "Mass never just disappears",
+      "title": "Yeh Physics Law Aapka Weight Loss Explain Karta Hai #Shorts",
+      "description": "Law of conservation of mass batata hai ki matter kabhi gayab nahi hota, sirf badalta hai. Isi se samjhiye fat kahan jaata hai. #Physics #Hinglish",
+      "share_ready": true,
+      "verdict": ""
+    },
+    {
+      "id": "short-3",
+      "section": "o3",
+      "scenes": [
+        "S13",
+        "S14",
+        "S15",
+        "S16",
+        "S17",
+        "S18",
+        "S19",
+        "S20",
+        "S21",
+        "S22"
+      ],
+      "hook": "Follow fat's journey inside your body",
+      "title": "Fat Cell Se Lungs Tak Ka Safar #Shorts",
+      "description": "Fat cell se bloodstream, mitochondria aur phir lungs tak, poora 3D journey dekhiye ki fat body ke andar kaise safar karta hai. #BodyScience #Hinglish",
+      "share_ready": true,
+      "verdict": ""
+    },
+    {
+      "id": "short-4",
+      "section": "o4",
+      "scenes": [
+        "S23",
+        "S24",
+        "S25",
+        "S26",
+        "S27",
+        "S28",
+        "S29",
+        "S30",
+        "S31",
+        "S32"
+      ],
+      "hook": "10 kg fat loss has a real",
+      "title": "10 Kg Fat Mein Se 8.4 Kg Saans Se Nikalta Hai #Shorts",
+      "description": "2014 ka BMJ study ka real calculation: 10 kg fat lose karne par 8.4 kg carbon dioxide aur 1.6 kg water banta hai. #Research #Hinglish",
+      "share_ready": true,
+      "verdict": ""
+    },
+    {
+      "id": "short-5",
+      "section": "o5",
+      "scenes": [
+        "S33",
+        "S34",
+        "S35",
+        "S36",
+        "S37",
+        "S38",
+        "S39",
+        "S40"
+      ],
+      "hook": "Can you breathe your fat away?",
+      "title": "Kya Tez Saans Lene Se Fat Kam Hota Hai? #Shorts",
+      "description": "Lungs hi weight loss ka main exit organ hain, lekin hyperventilate karne se fat kam nahi hota. Asli tarika jaaniye. #FitnessMyths #Hinglish",
+      "share_ready": true,
+      "verdict": ""
+    }
+  ],
+  "thumbnail": {
+    "headline": "Where Does Fat GO?",
+    "sub": "The 10 kg mystery, solved"
+  },
+  "youtube": {
+    "title": "10 Kg Fat Kam Hua Toh Woh Gaya Kahan? Science Ka Jawab",
+    "description": "Jab hum weight loss karte hain, toh asli sawaal yeh hai ki woh 'lost' mass jaata kahan hai. Is video mein hum 2014 ke BMJ study (Ruben Meerman aur Andrew Brown, University of New South Wales) ke real numbers ke saath samjhate hain ki 10 kg fat lose karne par 8.4 kg carbon dioxide ban kar lungs se exhale hota hai, aur 1.6 kg paani ban kar urine, sweat aur breath se nikalta hai. Hum law of conservation of mass se shuru karte hain, fat cell se lekar mitochondria tak ka 3D body journey dikhate hain, aur asli calculation step by step samjhate hain.\n\nSources:\nhttps://www.bmj.com/content/349/bmj.g7257\nhttps://www.bmj.com/content/bmj/349/bmj.g7257.full.pdf\nhttps://www.sciencedaily.com/releases/2014/12/141216212047.htm\nhttps://www.unsw.edu.au/newsroom/news/2018/03/when-we-lose-weight--where-does-it-go-\nhttps://www.nature.com/scitable/knowledge/library/the-conservation-of-mass-17395478/\nhttps://en.wikipedia.org/wiki/Conservation_of_mass\nhttps://www.nuscimagazine.com/the-fate-of-fat-f3351803ff8f\nhttps://flexbooks.ck12.org/cbook/ck-12-chemistry-flexbook-2.0/section/26.9/primary/lesson/triglycerides-chem/\nhttps://www.medicalnewstoday.com/articles/287046\n\n#WeightLoss #Science #Hinglish #KumarUjjwal",
+    "tags": [
+      "weight loss science",
+      "where does fat go",
+      "conservation of mass",
+      "BMJ study fat",
+      "fat loss explained Hinglish",
+      "how fat leaves the body",
+      "Ruben Meerman fat study",
+      "triglyceride metabolism",
+      "fat burning science Hinglish",
+      "kumar ujjwal"
+    ]
+  },
+  "sources": [
+    {
+      "title": "When somebody loses weight, where does the fat go? - The BMJ",
+      "url": "https://www.bmj.com/content/349/bmj.g7257"
+    },
+    {
+      "title": "When somebody loses weight, where does the fat go? (full PDF) - The BMJ",
+      "url": "https://www.bmj.com/content/bmj/349/bmj.g7257.full.pdf"
+    },
+    {
+      "title": "When you lose weight, where does the fat go? Most mass is breathed out as carbon dioxide - ScienceDaily",
+      "url": "https://www.sciencedaily.com/releases/2014/12/141216212047.htm"
+    },
+    {
+      "title": "When we lose weight, where does it go? - UNSW Newsroom",
+      "url": "https://www.unsw.edu.au/newsroom/news/2018/03/when-we-lose-weight--where-does-it-go-"
+    },
+    {
+      "title": "The Conservation of Mass - Nature Scitable",
+      "url": "https://www.nature.com/scitable/knowledge/library/the-conservation-of-mass-17395478/"
+    },
+    {
+      "title": "Conservation of mass - Wikipedia",
+      "url": "https://en.wikipedia.org/wiki/Conservation_of_mass"
+    },
+    {
+      "title": "The Fate of Fat - NUSci Magazine",
+      "url": "https://www.nuscimagazine.com/the-fate-of-fat-f3351803ff8f"
+    },
+    {
+      "title": "Triglycerides - Examples, Types, Structure and Metabolism - CK-12 Foundation",
+      "url": "https://flexbooks.ck12.org/cbook/ck-12-chemistry-flexbook-2.0/section/26.9/primary/lesson/triglycerides-chem/"
+    },
+    {
+      "title": "Majority of weight loss occurs 'via breathing' - Medical News Today",
+      "url": "https://www.medicalnewstoday.com/articles/287046"
+    }
+  ],
+  "scenes": [
+    {
+      "narration": "[curious] जब कोई इंसान ten kilo वज़न कम करता है, तो वो fat शरीर से निकलकर जाता असल में कहाँ है?",
+      "visual": {
+        "type": "question",
+        "text": "Where does the lost fat actually go?",
+        "highlight": [
+          "fat"
+        ]
+      },
+      "beat": "Open with hook question: where does lost body weight physically go",
+      "objective": "o1a",
+      "completes": [],
+      "id": "S01",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[warm] सोचिए, आप weighing scale पर खड़े हैं और number ten kilo कम दिखा रहा है। [pause] लेकिन वो ten kilo गया आखिर कहाँ?",
+      "visual": {
+        "type": "footage",
+        "query": "person stepping weighing scale smiling bathroom",
+        "caption": "Ten kilos lost... but where?"
+      },
+      "beat": "Show someone stepping on weighing scale after weight loss, relatable scene",
+      "objective": "o1a",
+      "completes": [
+        "o1a"
+      ],
+      "id": "S02",
+      "durationSec": 9.2
+    },
+    {
+      "narration": "[explaining] ज़्यादातर लोग मानते हैं कि फैट burn होकर सीधे energy या heat में बदल जाता है।",
+      "visual": {
+        "type": "points",
+        "heading": "Common Belief",
+        "items": [
+          "Fat burns into energy",
+          "Fat turns into heat"
+        ],
+        "highlight": [
+          "energy",
+          "heat"
+        ]
+      },
+      "beat": "List common wrong belief: fat burns into pure energy or heat",
+      "objective": "o1b",
+      "completes": [],
+      "id": "S03",
+      "durationSec": 6.7
+    },
+    {
+      "narration": "[explaining] कुछ लोग यह भी सोचते हैं कि फैट पसीने के रास्ते निकल जाता है, या muscle में बदल जाता है।",
+      "visual": {
+        "type": "points",
+        "heading": "More Myths",
+        "items": [
+          "Fat leaves as sweat",
+          "Fat converts into muscle"
+        ],
+        "highlight": [
+          "sweat",
+          "muscle"
+        ]
+      },
+      "beat": "List myth: fat leaves as sweat or simply turns into muscle",
+      "objective": "o1b",
+      "completes": [
+        "o1b"
+      ],
+      "id": "S04",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[thoughtful] पर असली सवाल यह है कि क्या matter, यानी mass, शरीर से ऐसे ही गायब हो सकता है?",
+      "visual": {
+        "type": "question",
+        "text": "Can mass simply disappear from the body?",
+        "highlight": [
+          "mass"
+        ]
+      },
+      "beat": "Pose real question: can matter simply vanish from the body",
+      "objective": "o1c",
+      "completes": [],
+      "id": "S05",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[confident] इस पहेली का जवाब physics के एक बहुत पुराने नियम के अंदर छुपा हुआ है।",
+      "visual": {
+        "type": "title",
+        "title": "Law of Conservation of Mass",
+        "subtitle": "The key to solving the fat mystery",
+        "kicker": "Physics"
+      },
+      "beat": "Reveal the physics law needed to answer this puzzle",
+      "objective": "o1c",
+      "completes": [
+        "o1c"
+      ],
+      "id": "S06",
+      "durationSec": 6.3
+    },
+    {
+      "narration": "[explaining] यह नियम कहता है कि किसी भी chemical reaction में mass न तो बनता है, न ही खत्म होता है, सिर्फ अपना रूप बदलता है।",
+      "visual": {
+        "type": "molecule",
+        "reaction": {
+          "from": [
+            "CH4",
+            "O2"
+          ],
+          "to": [
+            "CO2",
+            "H2O"
+          ],
+          "label": "CH4 + 2O2 → CO2 + 2H2O"
+        }
+      },
+      "beat": "Define law of conservation of mass with molecule animation",
+      "objective": "o2a",
+      "completes": [],
+      "id": "S07",
+      "durationSec": 10.4
+    },
+    {
+      "narration": "[measured] यह सच करीब seventeen eighty nine में French chemist Antoine Lavoisier ने experiments से साबित किया था।",
+      "visual": {
+        "type": "source",
+        "url": "https://en.wikipedia.org/wiki/Conservation_of_mass",
+        "publisher": "Wikipedia",
+        "authors": "Wikipedia contributors",
+        "date": "2014",
+        "title": "Conservation of mass",
+        "why": "Explain how Lavoisier proved mass is neither created nor destroyed"
+      },
+      "beat": "Show source: Lavoisier around 1789 proved mass is never created or destroyed",
+      "objective": "o2a",
+      "completes": [
+        "o2a"
+      ],
+      "id": "S08",
+      "durationSec": 7.1
+    },
+    {
+      "narration": "[explaining] तो इस law का मतलब यह है कि mass सिर्फ अपना रूप बदलता है। [pause] एक molecule टूटकर नए molecules में बदल जाता है, गायब कभी नहीं होता।",
+      "visual": {
+        "type": "molecule",
+        "molecules": [
+          "H2O",
+          "CO2",
+          "O2"
+        ]
+      },
+      "onScreen": "Mass only transforms",
+      "beat": "Explain mass only transforms, rearranges into new molecules, never disappears",
+      "objective": "o2b",
+      "completes": [],
+      "id": "S09",
+      "durationSec": 11.3
+    },
+    {
+      "narration": "[explaining] जैसे मान लीजिए पानी उबल रहा है। [pause] पानी के molecules भाप बनकर उड़ जाते हैं, मगर उनका mass हवा में वैसे ही मौजूद रहता है।",
+      "visual": {
+        "type": "molecule",
+        "molecules": [
+          "H2O"
+        ]
+      },
+      "onScreen": "Same mass, new form",
+      "beat": "Example: boiling water becomes vapour, same mass of molecules escapes",
+      "objective": "o2b",
+      "completes": [
+        "o2b"
+      ],
+      "id": "S10",
+      "durationSec": 10.4
+    },
+    {
+      "narration": "[emphatic] अब यही law हमारी body पर भी लागू होता है। [pause] अगर fat कम हो रहा है, तो उसके atoms को कहीं न कहीं body से बाहर तो जाना ही पड़ेगा।",
+      "visual": {
+        "type": "body",
+        "focus": "fat",
+        "caption": "Fat atoms must exit the body"
+      },
+      "beat": "Apply the law to human body: fat atoms must exit somewhere",
+      "objective": "o2c",
+      "completes": [],
+      "id": "S11",
+      "durationSec": 12.5
+    },
+    {
+      "narration": "[curious] तो सवाल यह है कि fat के वो atoms exactly body से बाहर कैसे निकलते हैं? [pause] चलिए इस पूरे सफर को step by step समझते हैं।",
+      "visual": {
+        "type": "question",
+        "text": "Where does fat actually exit the body?",
+        "highlight": [
+          "exit"
+        ]
+      },
+      "beat": "Tease next section: trace fat's exact exit route inside body",
+      "objective": "o2c",
+      "completes": [
+        "o2c"
+      ],
+      "id": "S12",
+      "durationSec": 10.8
+    },
+    {
+      "narration": "[explaining] सबसे पहले बात करते हैं fat cell की, जो skin के नीचे मौजूद होती है। [pause] यहाँ fat triglyceride molecules के रूप में store होकर रहता है।",
+      "visual": {
+        "type": "body",
+        "steps": [
+          {
+            "organ": "fat",
+            "label": "Triglycerides stored in fat cell"
+          }
+        ]
+      },
+      "beat": "Show fat cell storing triglyceride molecules under the skin",
+      "objective": "o3a",
+      "completes": [],
+      "id": "S13",
+      "durationSec": 10.8
+    },
+    {
+      "narration": "[explaining] एक triglyceride molecule बना होता है एक glycerol और three fatty acid chains से। [pause] यही structure body में energy का reserve बनकर बैठा रहता है।",
+      "visual": {
+        "type": "molecule",
+        "molecules": [
+          "triglyceride"
+        ]
+      },
+      "onScreen": "Glycerol + 3 fatty acids",
+      "beat": "Zoom into triglyceride molecule structure: glycerol plus three fatty acids",
+      "objective": "o3a",
+      "completes": [
+        "o3a"
+      ],
+      "id": "S14",
+      "durationSec": 10.4
+    },
+    {
+      "narration": "[explaining] जब आप calorie deficit में जाते हैं, यानी खाने से कम energy लेते हैं, तो body lipolysis शुरू करती है। [pause] इसमें lipase नाम का enzyme triglyceride को तोड़ना शुरू कर देता है।",
+      "visual": {
+        "type": "body",
+        "steps": [
+          {
+            "organ": "fat",
+            "label": "Lipase breaks down triglyceride"
+          }
+        ]
+      },
+      "beat": "Calorie deficit triggers lipolysis, enzyme lipase breaks triglyceride apart",
+      "objective": "o3b",
+      "completes": [],
+      "id": "S15",
+      "durationSec": 13.3
+    },
+    {
+      "narration": "[explaining] इस टूटने से triglyceride, glycerol और fatty acids में बंट जाता है। [pause] फिर यह दोनों bloodstream में release होकर आगे की यात्रा शुरू करते हैं।",
+      "visual": {
+        "type": "body",
+        "steps": [
+          {
+            "organ": "fat",
+            "label": "Triglyceride splits apart"
+          },
+          {
+            "organ": "blood",
+            "label": "Glycerol and fatty acids released"
+          }
+        ],
+        "flow": {
+          "path": [
+            "fat",
+            "blood"
+          ],
+          "particle": "fat",
+          "label": "Entering the bloodstream"
+        }
+      },
+      "beat": "Fat splits into glycerol and fatty acids, released into bloodstream",
+      "objective": "o3b",
+      "completes": [
+        "o3b"
+      ],
+      "id": "S16",
+      "durationSec": 10.4
+    },
+    {
+      "narration": "[explaining] अब यह fatty acids blood vessels के through पूरे body में सफर करते हैं... [pause] जहाँ cells को energy की जरूरत होती है, वहीं यह पहुँचते हैं।",
+      "visual": {
+        "type": "body",
+        "steps": [
+          {
+            "organ": "blood",
+            "label": "Fatty acids travel through bloodstream"
+          }
+        ],
+        "flow": {
+          "path": [
+            "fat",
+            "blood"
+          ],
+          "particle": "fat",
+          "label": "Moving toward hungry cells"
+        }
+      },
+      "onScreen": "Fatty acids in blood",
+      "beat": "Fatty acids travel through blood vessels toward hungry body cells",
+      "objective": "o3c",
+      "completes": [],
+      "id": "S17",
+      "durationSec": 10.8
+    },
+    {
+      "narration": "[explaining] यह fatty acids muscle और organ cells में घुसते हैं, जिन्हें fuel की जरूरत होती है।",
+      "visual": {
+        "type": "body",
+        "steps": [
+          {
+            "organ": "muscle",
+            "label": "Fatty acids enter muscle cells"
+          },
+          {
+            "organ": "liver",
+            "label": "Fatty acids enter organ cells"
+          }
+        ]
+      },
+      "onScreen": "Entering cells for fuel",
+      "beat": "Fatty acids enter muscle and organ cells needing fuel",
+      "objective": "o3c",
+      "completes": [
+        "o3c"
+      ],
+      "id": "S18",
+      "durationSec": 6.7
+    },
+    {
+      "narration": "[explaining] हर cell के अंदर mitochondria नाम का powerhouse होता है, जहाँ beta-oxidation fatty acids को छोटे टुकड़ों में तोड़ देता है।",
+      "visual": {
+        "type": "body",
+        "focus": "muscle",
+        "caption": "Beta-oxidation inside mitochondria"
+      },
+      "onScreen": "Mitochondria: beta-oxidation",
+      "beat": "Inside mitochondria, beta-oxidation breaks fatty acids into small fragments",
+      "objective": "o3d",
+      "completes": [],
+      "id": "S19",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[explaining] इन टुकड़ों से Krebs cycle और electron transport chain चलता है, जो carbon dioxide और water बनाकर छोड़ता है।",
+      "visual": {
+        "type": "molecule",
+        "reaction": {
+          "from": [
+            "triglyceride",
+            "O2"
+          ],
+          "to": [
+            "CO2",
+            "H2O"
+          ],
+          "label": "Krebs cycle + electron transport chain"
+        }
+      },
+      "onScreen": "CO2 + H2O released",
+      "beat": "Krebs cycle and electron transport chain release carbon dioxide and water",
+      "objective": "o3d",
+      "completes": [
+        "o3d"
+      ],
+      "id": "S20",
+      "durationSec": 7.9
+    },
+    {
+      "narration": "[explaining] यह carbon dioxide blood के through lungs तक पहुँचता है, जहाँ से आप इसे साँस के साथ बाहर छोड़ देते हैं।",
+      "visual": {
+        "type": "body",
+        "steps": [
+          {
+            "organ": "blood",
+            "label": "Carbon dioxide travels through blood"
+          },
+          {
+            "organ": "lungs",
+            "label": "Exhaled out through lungs"
+          }
+        ],
+        "flow": {
+          "path": [
+            "blood",
+            "lungs",
+            "nose"
+          ],
+          "particle": "CO2",
+          "label": "CO2 leaves with your breath"
+        }
+      },
+      "sfx": "whoosh",
+      "beat": "Carbon dioxide travels through blood into lungs for exhale",
+      "objective": "o3e",
+      "completes": [],
+      "id": "S21",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[explaining] जो water बनता है, वह urine, sweat, breath और आँसुओं के through body से बाहर निकल जाता है।",
+      "visual": {
+        "type": "body",
+        "steps": [
+          {
+            "organ": "kidneys",
+            "label": "Water filtered for urine"
+          },
+          {
+            "organ": "bladder",
+            "label": "Excreted as urine"
+          },
+          {
+            "organ": "skin",
+            "label": "Released as sweat"
+          }
+        ]
+      },
+      "onScreen": "Water exits: urine, sweat, breath",
+      "beat": "Water formed exits via urine, sweat, breath and tears",
+      "objective": "o3e",
+      "completes": [
+        "o3e"
+      ],
+      "id": "S22",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[measured] twenty fourteen में BMJ journal में Meerman और Brown ने explain किया कि fat असल में जाता कहाँ है।",
+      "visual": {
+        "type": "source",
+        "url": "https://www.bmj.com/content/349/bmj.g7257",
+        "publisher": "The BMJ",
+        "authors": "Ruben Meerman & Andrew Brown",
+        "date": "16 December 2014",
+        "title": "When somebody loses weight, where does the fat go?",
+        "why": "To find out where lost fat mass physically goes"
+      },
+      "beat": "Introduce 2014 BMJ study asking where lost fat mass actually goes",
+      "objective": "o4a",
+      "completes": [],
+      "id": "S23",
+      "durationSec": 7.9
+    },
+    {
+      "narration": "[explaining] यह study University of New South Wales, Sydney में हुई थी, जहाँ Ruben Meerman physicist के तौर पर research कर रहे थे।",
+      "visual": {
+        "type": "map",
+        "map": {
+          "projection": "globe-to-flat",
+          "from": {
+            "center": [
+              0,
+              20
+            ],
+            "zoom": 1.2
+          },
+          "focus": {
+            "center": [
+              151.2093,
+              -33.8688
+            ],
+            "zoom": 10
+          },
+          "highlights": [
+            {
+              "iso3": "AUS",
+              "tone": "accent",
+              "delay": 10
+            }
+          ],
+          "markers": [
+            {
+              "at": [
+                151.2313,
+                -33.9173
+              ],
+              "label": "UNSW Sydney",
+              "delay": 25
+            }
+          ]
+        }
+      },
+      "onScreen": "UNSW, Sydney",
+      "beat": "Locate University of New South Wales, Sydney, where study was done",
+      "objective": "o4a",
+      "completes": [
+        "o4a"
+      ],
+      "id": "S24",
+      "durationSec": 9.2
+    },
+    {
+      "narration": "[explaining] हर fat molecule का एक average chemical formula होता है, C fifty five, H one zero four, O six। [pause] यही triglyceride कहलाता है जो शरीर में जमा रहता है।",
+      "visual": {
+        "type": "formula",
+        "heading": "Average Fat Molecule",
+        "lines": [
+          {
+            "text": "C55H104O6",
+            "note": "Average triglyceride formula"
+          }
+        ]
+      },
+      "onScreen": "C55H104O6",
+      "beat": "Show average fat molecule formula: C fifty five H hundred four O six",
+      "objective": "o4b",
+      "completes": [],
+      "id": "S25",
+      "durationSec": 12.1
+    },
+    {
+      "narration": "[measured] इस formula में fifty five carbon atoms, one hundred four hydrogen atoms, और six oxygen atoms होते हैं। [pause] यही पूरे molecule की atomic structure बनाते हैं।",
+      "visual": {
+        "type": "points",
+        "heading": "Atom Count in C55H104O6",
+        "items": [
+          "55 Carbon atoms",
+          "104 Hydrogen atoms",
+          "6 Oxygen atoms"
+        ],
+        "highlight": [
+          "55",
+          "104",
+          "6"
+        ]
+      },
+      "beat": "Count atoms: fifty five carbon, hundred four hydrogen, six oxygen",
+      "objective": "o4b",
+      "completes": [
+        "o4b"
+      ],
+      "id": "S26",
+      "durationSec": 10.8
+    },
+    {
+      "narration": "[explaining] मान लीजिए किसी व्यक्ति का ten kilograms fat कम हुआ है। [pause] अब हमें पता करना है कि इसके लिए कितना oxygen चाहिए, और कितना carbon dioxide व water बनेगा।",
+      "visual": {
+        "type": "formula",
+        "heading": "Numerical: Known Values",
+        "lines": [
+          {
+            "text": "Known: 10 kg fat lost"
+          },
+          {
+            "text": "Find: Oxygen needed, CO2 and H2O produced"
+          }
+        ]
+      },
+      "compact": true,
+      "beat": "Known value: ten kilograms of fat, find oxygen needed and output",
+      "objective": "o4c",
+      "completes": [],
+      "id": "S27",
+      "durationSec": 12.1
+    },
+    {
+      "narration": "[explaining] इसे हल करने के लिए पहले पूरा equation लिखते हैं... fat plus oxygen, carbon dioxide और water में बदलता है। [pause] इसी को complete oxidation कहा जाता है।",
+      "visual": {
+        "type": "formula",
+        "heading": "Oxidation Equation",
+        "lines": [
+          {
+            "text": "Fat + O2 → CO2 + H2O",
+            "note": "Complete oxidation"
+          }
+        ]
+      },
+      "compact": true,
+      "beat": "Write stoichiometry equation for complete oxidation of fat molecule",
+      "objective": "o4c",
+      "completes": [],
+      "id": "S28",
+      "durationSec": 11.3
+    },
+    {
+      "narration": "[measured] ten kilograms fat को oxidise करने के लिए twenty nine kilograms oxygen लगती है। [pause] नतीजा: twenty eight kilograms carbon dioxide और eleven kilograms water।",
+      "visual": {
+        "type": "formula",
+        "heading": "Substituting Values",
+        "lines": [
+          {
+            "text": "10 kg fat + 29 kg O2"
+          },
+          {
+            "text": "→ 28 kg CO2 + 11 kg H2O",
+            "final": true
+          }
+        ]
+      },
+      "onScreen": "29 kg O2 needed",
+      "compact": true,
+      "beat": "Substitute values: ten kilograms fat needs twenty nine kilograms oxygen",
+      "objective": "o4c",
+      "completes": [],
+      "id": "S29",
+      "durationSec": 10
+    },
+    {
+      "narration": "[emphatic] जवाब है: ten kilo fat में से eight point four kilograms carbon dioxide बनकर निकलता है। [pause] बाकी one point six kilograms पानी urine, sweat और breath से बाहर जाता है।",
+      "visual": {
+        "type": "stat",
+        "value": 8.4,
+        "from": 0,
+        "suffix": " kg",
+        "decimals": 1,
+        "label": "Exhaled as CO2 out of 10 kg fat lost",
+        "source": "Meerman & Brown, BMJ, 2014"
+      },
+      "onScreen": "8.4 kg CO2 + 1.6 kg H2O",
+      "sfx": "ping",
+      "compact": true,
+      "beat": "Final answer: eight point four kg carbon dioxide, one point six kg water",
+      "objective": "o4c",
+      "completes": [
+        "o4c"
+      ],
+      "id": "S30",
+      "durationSec": 12.5
+    },
+    {
+      "narration": "[measured] इसका मतलब है कि lost fat का eighty four percent हिस्सा सांस के through carbon dioxide बनकर निकलता है। [pause] और सिर्फ sixteen percent पानी के रूप में body से बाहर जाता है।",
+      "visual": {
+        "type": "stat",
+        "value": 84,
+        "from": 0,
+        "suffix": "%",
+        "decimals": 0,
+        "label": "Of lost fat exhaled as CO2",
+        "source": "Meerman & Brown, BMJ, 2014"
+      },
+      "onScreen": "84% vs 16%",
+      "compact": true,
+      "beat": "Interpret result: eighty four percent exhaled, sixteen percent becomes water",
+      "objective": "o4d",
+      "completes": [],
+      "id": "S31",
+      "durationSec": 13.3
+    },
+    {
+      "narration": "[confident] तो अगर myth को real answer से compare करें, तो फर्क साफ दिखता है। [pause] fat ऊर्जा में नहीं बदलता, बल्कि carbon dioxide और water बनकर शरीर से बाहर निकलता है।",
+      "visual": {
+        "type": "compare",
+        "left": {
+          "heading": "Myth",
+          "items": [
+            "Fat turns into energy",
+            "Fat burns into heat",
+            "Fat leaves as sweat only"
+          ],
+          "tone": "muted"
+        },
+        "right": {
+          "heading": "Reality",
+          "items": [
+            "84% exits as exhaled CO2",
+            "16% becomes water, excreted"
+          ],
+          "tone": "accent"
+        }
+      },
+      "beat": "Compare myth versus real answer side by side for clarity",
+      "objective": "o4d",
+      "completes": [
+        "o4d"
+      ],
+      "id": "S32",
+      "durationSec": 12.5
+    },
+    {
+      "narration": "[emphatic] तो अब यह साफ हो गया है कि weight loss का असली exit point lungs ही हैं। [pause] हर exhale के साथ carbon dioxide शरीर से बाहर निकल जाती है।",
+      "visual": {
+        "type": "body",
+        "flow": {
+          "path": [
+            "fat",
+            "blood",
+            "lungs",
+            "nose"
+          ],
+          "particle": "CO2",
+          "label": "Lungs are the exit organ"
+        }
+      },
+      "onScreen": "Lungs = exit organ",
+      "beat": "Confirm lungs are the primary excretory organ for weight loss",
+      "objective": "o5a",
+      "completes": [],
+      "id": "S33",
+      "durationSec": 12.1
+    },
+    {
+      "narration": "[measured] एक average व्यक्ति सिर्फ आराम की हालत में भी एक दिन में करीब two hundred grams carbon exhale कर देता है।",
+      "visual": {
+        "type": "stat",
+        "value": 200,
+        "from": 0,
+        "suffix": " g",
+        "label": "Carbon exhaled daily (resting)",
+        "source": "Meerman & Brown, BMJ, 2014"
+      },
+      "compact": true,
+      "beat": "Resting person exhales about two hundred grams of carbon daily",
+      "objective": "o5a",
+      "completes": [
+        "o5a"
+      ],
+      "id": "S34",
+      "durationSec": 8.8
+    },
+    {
+      "narration": "[explaining] एक घंटा jogging करने पर metabolic rate seven गुना बढ़ जाती है। [pause] इससे carbon output twenty percent बढ़कर two hundred forty grams तक पहुँच जाता है।",
+      "visual": {
+        "type": "footage",
+        "query": "person jogging outdoor exercise park",
+        "caption": "Jogging raises carbon output"
+      },
+      "beat": "Exercise raises metabolic rate, pushing more carbon out through breath",
+      "objective": "o5b",
+      "completes": [],
+      "id": "S35",
+      "durationSec": 10.8
+    },
+    {
+      "narration": "[warm] सिर्फ park में टहलना भी resting metabolism को लगभग three गुना बढ़ा देता है, जिससे ज़्यादा fat burn होता है।",
+      "visual": {
+        "type": "footage",
+        "query": "person walking park daily exercise",
+        "caption": "Walking triples metabolic rate"
+      },
+      "beat": "Everyday walk in the park triples metabolic rate, burns more fat",
+      "objective": "o5b",
+      "completes": [
+        "o5b"
+      ],
+      "id": "S36",
+      "durationSec": 8.3
+    },
+    {
+      "narration": "[serious] लेकिन सिर्फ तेज़ी से साँस लेने से fat नहीं पिघलता। [pause] C O two बाहर निकलने के लिए पहले fat का oxidation होना ज़रूरी है, सिर्फ breathing तेज़ करने से नहीं।",
+      "visual": {
+        "type": "points",
+        "heading": "Myth Check",
+        "items": [
+          "Fast breathing alone doesn't burn fat",
+          "CO2 needs fat oxidation first",
+          "Exercise burns fat, not forced breathing"
+        ],
+        "highlight": [
+          "fat oxidation"
+        ]
+      },
+      "beat": "Bust myth: breathing faster on purpose will not melt fat away",
+      "objective": "o5c",
+      "completes": [],
+      "id": "S37",
+      "durationSec": 12.5
+    },
+    {
+      "narration": "[thoughtful] और जो carbon आप exhale करते हैं, वो हाल ही के food से आता है, plants से, ancient fossil fuel से नहीं।",
+      "visual": {
+        "type": "molecule",
+        "molecules": [
+          "CO2"
+        ]
+      },
+      "onScreen": "Recent food, not fossil carbon",
+      "beat": "Exhaled carbon came from recent food, not ancient fossil fuel",
+      "objective": "o5c",
+      "completes": [
+        "o5c"
+      ],
+      "id": "S38",
+      "durationSec": 9.2
+    },
+    {
+      "narration": "[warm] तो real takeaway सीधा है, कम खाइए, ज़्यादा move कीजिए, और बाकी का काम lungs खुद कर लेंगे।",
+      "visual": {
+        "type": "points",
+        "heading": "The Real Takeaway",
+        "items": [
+          "Eat less",
+          "Move more",
+          "Let lungs exhale the rest"
+        ],
+        "highlight": [
+          "lungs"
+        ]
+      },
+      "beat": "Real takeaway: eat less, move more, let lungs do the rest",
+      "objective": "o5d",
+      "completes": [],
+      "id": "S39",
+      "durationSec": 7.5
+    },
+    {
+      "narration": "[calm] तो अगली बार जब वज़न कम हो, समझ जाइए कि ज़्यादातर fat साँस के ज़रिए ही बाहर निकल गया।",
+      "visual": {
+        "type": "title",
+        "title": "Weight Loss Is Mostly An Exhale",
+        "subtitle": "The fat you lose, you breathe out",
+        "kicker": "The Quiet Truth"
+      },
+      "beat": "Close with quiet truth: weight loss is mostly an exhale",
+      "objective": "o5d",
+      "completes": [
+        "o5d"
+      ],
+      "id": "S40",
+      "durationSec": 7.9
+    }
+  ],
+  "voice": {
+    "guide": {}
+  },
+  "id": "20261013-1536-if-you-lose-10-kg-where-does-that-physic",
+  "format": "16:9",
+  "qc": {
+    "scores": {},
+    "facts": [],
+    "checklist": [],
+    "fixed": [],
+    "remaining": [
+      {
+        "id": "S25",
+        "issues": [
+          "broken word mixing Latin and Devanagari letters"
+        ]
+      },
+      {
+        "id": "S29",
+        "issues": [
+          "broken word mixing Latin and Devanagari letters"
+        ]
+      }
+    ],
+    "shorts": [
+      {
+        "id": "short-1",
+        "share_ready": true,
+        "verdict": ""
+      },
+      {
+        "id": "short-2",
+        "share_ready": true,
+        "verdict": ""
+      },
+      {
+        "id": "short-3",
+        "share_ready": true,
+        "verdict": ""
+      },
+      {
+        "id": "short-4",
+        "share_ready": true,
+        "verdict": ""
+      },
+      {
+        "id": "short-5",
+        "share_ready": true,
+        "verdict": ""
+      }
+    ]
+  }
+}
