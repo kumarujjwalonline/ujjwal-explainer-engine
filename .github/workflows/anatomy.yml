@@ -1,0 +1,37 @@
+name: Build anatomy models
+# Downloads BodyParts3D (DBCLS, CC BY 4.0) and builds the organ models used by the 3D body walkthrough.
+on:
+  workflow_dispatch:
+    inputs:
+      step:
+        description: "lists = fetch part lists only; build = build the GLB models"
+        default: build
+permissions:
+  contents: write
+jobs:
+  anatomy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Part lists
+        run: |
+          mkdir -p data/bodyparts3d
+          B=https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST
+          for f in partof_parts_list_e.txt partof_element_parts.txt isa_parts_list_e.txt partof_inclusion_relation_list.txt; do
+            curl -fsSL --retry 3 -o data/bodyparts3d/$f $B/$f
+          done
+          ls -la data/bodyparts3d
+      - name: Build models
+        if: inputs.step == 'build'
+        run: |
+          pip install --break-system-packages trimesh fast-simplification numpy
+          curl -fsSL --retry 3 -o /tmp/obj.zip https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_BP3D_4.0_obj_99.zip
+          mkdir -p /tmp/obj && unzip -q /tmp/obj.zip -d /tmp/obj
+          python3 scripts/build_anatomy.py /tmp/obj data/bodyparts3d public/anatomy
+      - name: Commit
+        run: |
+          git config user.name "anatomy-bot"; git config user.email "actions@github.com"
+          git add data/bodyparts3d public/anatomy 2>/dev/null || git add data/bodyparts3d
+          git commit -m "Anatomy models from BodyParts3D (${{ inputs.step }})" || echo "nothing to commit"
+          git pull --rebase -q && git push
