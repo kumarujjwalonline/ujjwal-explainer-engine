@@ -18,7 +18,18 @@ import urllib.request
 
 UA = {"User-Agent": "ujjwal-explainer-engine/1.0 (github.com/kumarujjwalonline/ujjwal-explainer-engine)"}
 COMMONS = "https://commons.wikimedia.org/w/api.php"
-BAD = re.compile(r"\b(logo|map|diagram|animation|slides?|lecture|interview|trailer|screencast)\b", re.I)
+BAD = re.compile(r"(logo|map|diagram|animation|slides?|lecture|interview|trailer|screencast|police|bodycam|shoot|suspect|gun|war|military|army|attack|crash|accident|protest|riot|dead|death|kill|blood|surgery|news|speech|press|election|campaign)", re.I)
+STOP = {"a", "an", "the", "in", "on", "of", "and", "with", "at", "for", "to", "from", "by", "morning", "evening", "video", "footage", "close", "up", "person", "people"}
+
+
+def relevant(query, text):
+    """At least two thirds of the query's content words must appear in the clip's title/description."""
+    words = [w for w in re.findall(r"[a-z]+", query.lower()) if w not in STOP and len(w) > 2]
+    if not words:
+        return True
+    text = text.lower()
+    hits = sum(1 for w in words if w in text or (w.endswith("ing") and w[:-3] in text) or w.rstrip("s") in text)
+    return hits >= max(1, -(-2 * len(words) // 3))
 
 path = sys.argv[1] if len(sys.argv) > 1 else "out/job.final.json"
 job = json.load(open(path, encoding="utf-8"))
@@ -62,6 +73,9 @@ def commons(query, need):
         if dur < 3 or w < 960 or h > w:  # need landscape, at least ~HD, a few seconds long
             continue
         meta = info.get("extmetadata") or {}
+        desc = strip_html((meta.get("ImageDescription") or {}).get("value"))[:500]
+        if BAD.search(desc) or not relevant(query, title + " " + desc):
+            continue
         lic = strip_html((meta.get("LicenseShortName") or {}).get("value"))
         if not lic or "fair use" in lic.lower():
             continue
@@ -96,7 +110,7 @@ for s in scenes:
     need = (s.get("durationSec") or 6) + 0.5
     pick, err = None, None
     words = query.split()
-    tries = [query] + ([" ".join(words[:3])] if len(words) > 3 else []) + ([" ".join(words[:2])] if len(words) > 2 else [])
+    tries = [query] + ([" ".join(words[:3])] if len(words) > 3 else [])
     for q in tries:  # Commons search is literal, so shorten the query if nothing matches
         for finder in (commons, pexels):
             try:

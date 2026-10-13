@@ -40,7 +40,7 @@ def pubmed_url(title):
     try:
         data = json.load(urllib.request.urlopen(f"https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?{q}", timeout=20))
         ids = data.get("esearchresult", {}).get("idlist", [])
-        return f"https://pubmed.ncbi.nlm.nih.gov/{ids[0]}/" if ids else None
+        return ids[0] if ids else None
     except Exception:  # noqa: BLE001
         return None
 
@@ -60,8 +60,10 @@ def capture(ctx, url, sid):
         title = (page.title() or "").lower()
         body = (page.inner_text("body") or "")[:4000].lower()
         status = resp.status if resp else 0
-        if status >= 400 or not body.strip() or any(k in title or k in body[:600] for k in BLOCKED):
-            return {"shot_error": f"page not capturable (status {status})"}
+        hit = next((k for k in BLOCKED if k in title or k in body[:600]), None)
+        if status >= 400 or not body.strip() or hit:
+            why = hit or ("empty page" if not body.strip() else "")
+            return {"shot_error": f"page not capturable (status {status}{', ' + why if why else ''})"}
         full = os.path.join(out_dir, f"{sid}-full.png")
         page.screenshot(path=full, full_page=True)
         img = Image.open(full)
@@ -77,9 +79,10 @@ def capture(ctx, url, sid):
 
 
 with sync_playwright() as p:
-    browser = p.chromium.launch()
+    browser = p.chromium.launch(args=["--disable-blink-features=AutomationControlled"])
     ctx = browser.new_context(viewport={"width": 1280, "height": 900}, locale="en-IN",
                               user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36")
+    ctx.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     for s in scenes:
         v = s["visual"]
         url = v["url"]
@@ -88,13 +91,14 @@ with sync_playwright() as p:
             continue
         result = capture(ctx, url, s["id"])
         if "shot" not in result:
-            alt = pubmed_url(v.get("title"))
-            if alt:
+            pmid = pubmed_url(v.get("title"))
+            # the study's record on PubMed, then on Europe PMC (same paper, gentler bot checks)
+            for alt in ([f"https://pubmed.ncbi.nlm.nih.gov/{pmid}/", f"https://europepmc.org/article/MED/{pmid}"] if pmid else []):
                 second = capture(ctx, alt, s["id"])
                 if "shot" in second:
                     result = second
-                else:
-                    result["shot_error"] += f"; PubMed also failed ({second.get('shot_error')})"
+                    break
+                result["shot_error"] += f"; {alt.split('/')[2]} failed ({second.get('shot_error')})"
         v.update(result)
         done[url] = result
         report.append({"id": s["id"], "url": url, **result})
