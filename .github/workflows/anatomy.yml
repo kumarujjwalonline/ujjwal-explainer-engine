@@ -18,7 +18,7 @@ jobs:
         run: |
           mkdir -p data/bodyparts3d
           B=https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST
-          for f in partof_parts_list_e.txt partof_element_parts.txt isa_parts_list_e.txt partof_inclusion_relation_list.txt; do
+          for f in partof_parts_list_e.txt partof_element_parts.txt isa_element_parts.txt isa_parts_list_e.txt partof_inclusion_relation_list.txt; do
             curl -fsSL --retry 3 -o data/bodyparts3d/$f $B/$f
           done
           ls -la data/bodyparts3d
@@ -26,9 +26,13 @@ jobs:
         if: inputs.step == 'build'
         run: |
           pip install --break-system-packages trimesh fast-simplification numpy
-          curl -fsSL --retry 3 -o /tmp/obj.zip https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/partof_BP3D_4.0_obj_99.zip
-          mkdir -p /tmp/obj && unzip -q /tmp/obj.zip -d /tmp/obj
-          python3 scripts/build_anatomy.py /tmp/obj data/bodyparts3d public/anatomy
+          mkdir -p /tmp/obj
+          for z in partof isa; do
+            curl -fsSL --retry 3 -o /tmp/$z.zip https://dbarchive.biosciencedbc.jp/data/bodyparts3d/LATEST/${z}_BP3D_4.0_obj_99.zip
+            unzip -qo /tmp/$z.zip -d /tmp/obj/$z && rm /tmp/$z.zip
+          done
+          python3 scripts/build_anatomy.py /tmp/obj data/bodyparts3d public/anatomy 2>&1 | tee /tmp/build.log
+          grep -E 'warning|Error|Traceback' /tmp/build.log | head -5 | sed 's/^/::error::/' || true
       - name: Commit
         run: |
           git config user.name "anatomy-bot"; git config user.email "actions@github.com"
