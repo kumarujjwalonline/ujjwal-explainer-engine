@@ -77,7 +77,10 @@ jobs:
         env:
           ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
           ELEVEN_MODEL: ${{ vars.ELEVEN_MODEL || 'eleven_v3' }}
-        run: bash scripts/voice_qc.sh "$JOB" ${{ inputs.mode == 'preview' && 'none' || inputs.mode }}
+        run: |
+          mkdir -p out
+          set -o pipefail
+          bash scripts/voice_qc.sh "$JOB" ${{ inputs.mode == 'preview' && 'none' || inputs.mode }} 2>&1 | tee out/voice.log
 
       - name: Save voice clips for later runs
         if: always()
@@ -116,6 +119,17 @@ jobs:
         if: success() && inputs.callback_url != ''
         run: |
           curl -sS -X POST -H 'Content-Type: application/json' --data @out/result.json "${{ inputs.callback_url }}"
+
+      - name: Keep logs of a failed run
+        if: failure()
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd out 2>/dev/null || exit 0
+          shopt -s nullglob
+          logs=(*.log audio-qc.json)
+          [ ${#logs[@]} -gt 0 ] && gh release create "debug-${{ inputs.job_id }}-${{ github.run_number }}" --title "debug ${{ inputs.job_id }}" --notes "Logs of a failed run" --prerelease "${logs[@]}" || true
 
       - name: Tell n8n about a failure
         if: failure() && inputs.callback_url != ''
