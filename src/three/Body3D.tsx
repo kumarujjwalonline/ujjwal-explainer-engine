@@ -69,6 +69,8 @@ const useAnatomy = () => {
   return a;
 };
 
+const PARTICLE: Record<string, string> = {CO2: '#D9E2EC', O2: '#5BC0FF', fat: '#F2C94C', water: '#4FC3F7', glucose: '#FF8A1F', blood: '#E5383B', signal: '#B388FF'};
+
 // Which meshes each organ in the script lights up.
 const ORGAN_GROUPS: Record<Organ, Group[]> = {
   brain: ['brain'], nose: ['nose', 'airways'], lungs: ['lungs', 'airways'], heart: ['heart'], liver: ['liver', 'gallbladder'],
