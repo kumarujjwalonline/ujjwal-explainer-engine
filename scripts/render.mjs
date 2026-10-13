@@ -91,12 +91,12 @@ let serveUrl;
 let browser;
 const setup = async () => {
   serveUrl = await bundle({entryPoint: path.resolve('src/index.ts'), publicDir: path.resolve('public')});
-  browser = await openBrowser('chrome', {chromiumOptions: {gl: 'swangle'}});
+  browser = await openBrowser('chrome', {chromiumOptions: {gl: 'angle'}});
 };
 const base = (composition, inputProps, scale) => ({
   composition, serveUrl, inputProps, scale,
-  // 3D scenes need WebGL; GitHub runners have no GPU, so Chrome draws it in software (SwiftShader via ANGLE).
-  chromiumOptions: {gl: 'swangle'},
+  // 3D scenes need WebGL; GitHub runners have no GPU, so Chrome draws it in software (ANGLE; benchmarked ~3x faster than swangle on GitHub runners).
+  chromiumOptions: {gl: 'angle'},
   puppeteerInstance: browser,
   concurrency: Math.max(2, os.cpus().length),
 });
@@ -175,7 +175,7 @@ if (cmd === 'plan') {
     console.log(`Assembled out/${v.name}.mp4 from ${v.chunks.length} scenes`);
   }
   const composition = await selectComposition({serveUrl, id: 'Thumbnail', inputProps: {job}, puppeteerInstance: browser});
-  await renderStill({composition, serveUrl, output: `out/${job.id}-thumbnail.png`, inputProps: {job}, chromiumOptions: {gl: 'swangle'}, puppeteerInstance: browser});
+  await renderStill({composition, serveUrl, output: `out/${job.id}-thumbnail.png`, inputProps: {job}, chromiumOptions: {gl: 'angle'}, puppeteerInstance: browser});
   console.log('Rendered thumbnail');
   // Keep only this version's chunks in the cache.
   for (const f of fs.readdirSync(CACHE)) if (!keep.has(f)) fs.rmSync(path.join(CACHE, f));
@@ -195,7 +195,7 @@ if (cmd === 'plan') {
     for (const s of job.shorts || []) await video(`${job.id}-${s.id}`, {job, format: '9:16', sceneIds: s.scenes, hook: s.hook}, what === 'preview' ? 0.5 : 1);
   if (what === 'all' || what === 'thumb' || what === 'preview') {
     const composition = await selectComposition({serveUrl, id: 'Thumbnail', inputProps: {job}, puppeteerInstance: browser});
-    await renderStill({composition, serveUrl, output: `out/${job.id}-thumbnail.png`, inputProps: {job}, chromiumOptions: {gl: 'swangle'}, puppeteerInstance: browser});
+    await renderStill({composition, serveUrl, output: `out/${job.id}-thumbnail.png`, inputProps: {job}, chromiumOptions: {gl: 'angle'}, puppeteerInstance: browser});
     console.log('Rendered thumbnail');
   }
   await browser.close({silent: true});

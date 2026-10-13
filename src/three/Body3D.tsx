@@ -29,7 +29,7 @@ export const THREE_DPR = 0.6;
 // Benchmark overrides (job.bench = {dpr, aa}) so render settings can be compared on GitHub.
 const bench = () => ((getInputProps() as {job?: {bench?: {dpr?: number; aa?: boolean}}}).job?.bench || {});
 export const threeDpr = () => bench().dpr ?? THREE_DPR;
-export const threeAA = () => bench().aa ?? true;
+export const threeAA = () => bench().aa ?? false; // anti-aliasing off: ~2x faster in software, no visible difference at 1080p
 
 // Real anatomy: meshes from BodyParts3D (DBCLS, CC BY 4.0), built by scripts/build_anatomy.py into
 // public/anatomy/*.glb. Metres, Y up, feet at y = 0, the person faces +z (towards the camera).
